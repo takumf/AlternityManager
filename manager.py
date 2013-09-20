@@ -163,6 +163,15 @@ def startsWithAny(this, these):
             return True
     return False
 
+def skillPointsSpent(character):
+    def _calcy(sk):
+        def _calcit(cost, level, profession, **junk):
+            return expense(cost, 
+                           level,
+                           -1 if startsWithAny(character.profession, profession) else 0)
+        return _calcit(**character[sk])
+    return sum(map(_calcy, skillsOf(character)))
+                                         
 def showSkills(character):
     def _composeSkillTxt(name, untrained, parent, stat, cost, level, profession, **remaining):
         ordinary=character.get(stat)+level
@@ -192,6 +201,7 @@ def showSkills(character):
     map(_skilGroupShow, 
         map(_skillsUnderStat, 
             alternityAbilities()))
+    print "Total Skill Points Spent: %s"%(skillPointsSpent(character))
     return character
 
 def showCharacter(character):
