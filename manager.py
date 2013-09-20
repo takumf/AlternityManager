@@ -21,7 +21,7 @@ def presentable(text):
 
 def sanitize(text):
     if text:
-        return text.lower().replace(" ", "_")
+        return text.lower().replace(" ", "_").replace("'", "_").replace("-","_")
     return None
 
 def genClassDef(data):
@@ -47,6 +47,17 @@ def genDat(data):
 
 def alternityAbilities():
     return "str dex con int wil per".split()
+
+def speciesFreeSkills():
+    return genDat({'human':"athletics,vehicle operation,stamina,knowledge,awareness,interaction".split(","),
+                   'fraal':"vehicle operation,knowledge,awareness,resolve,interaction,telepathy".split(","),
+                   'mechalus':"athletics,vehicle operation,stamina,knowledge,computer science,awareness".split(","),
+                   'sesheyan':"melee weapons,acrobatics,stamina,knowledge,awareness,interaction".split(","),
+                   "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
+                   'weren':"athletics,unarmed attack,stamina,knowledge,awareness,interaction".split(",")})
+
+def freeSkillsFor(character):
+    return speciesFreeSkills().get(sanitize(character.species))
 
 def halfish(value):
     return (value-(value%2))/2
@@ -135,7 +146,7 @@ def showAbilities(character):
         def _resMod():
             rm=resmod(nm, val)
             if rm is not None:
-                return rm
+                return "%s%s"%("+" if rm>=0 else "-", rm)
             return ""
         print "%s: %s ( %s ) %s"%(presentable(nm), ("%s"%(val)).rjust(2), halfish(val), _resMod())
         return nm
@@ -147,26 +158,46 @@ def showAbilities(character):
 def nmDisp(txt, indent):
     return ("%s%s"%("" if indent else "   ", txt)).ljust(27, ".")
 
-def expense(cost, level, offset=0):
-    def _foo(lvl):
-        return (cost-1+offset)+lvl
-    if level>0:
-        return sum(map(_foo, range(1,level)), cost)
-    return 0
-
 def startsWithAny(this, these):
     for c in these.upper():
         if this.upper().startswith(c):
             return True
     return False
 
+def skillExpense(character, skillName):
+    def _costPerBoost(cost, level):
+        return (cost-1)+level
+    def _totalCost(cc, il, level):
+        return sum(map(cc, range(il, level)))
+    def _calcExpense(chProf, gainedFree, cost, profession, level, **rest):
+        return _totalCost(partial(_costPerBoost, cost-1 if profession==chProf else cost),
+                          2 if gainedFree else 0,
+                          level)
+    return _calcExpense(character.profession,
+                        skillName in freeSkillsFor(character),
+                        **character.get(skillName))
+
+def showSkillExpense(character, skillNameRaw):
+    def _se(skillName):
+        profession=character.get(skillNameRaw).profession
+        professionMatches=startsWithAny(character.profession, 
+                                        profession)
+        professionBenefit=-1 if professionMatches else 0
+        print "%s: Cost %s.  %s points spent"%(
+            presentable(skillName), 
+            character.get(skillNameRaw).cost+professionBenefit,
+            skillExpense(character, skillName) )
+        if skillName in freeSkillsFor(character):
+            print "    This is a free skill for your species"
+        if professionMatches:
+            print "    This skill falls under your profession"
+        print ""
+        return True
+    return _se(sanitize(skillNameRaw))
+
 def skillPointsSpent(character):
     def _calcy(sk):
-        def _calcit(cost, level, profession, **junk):
-            return expense(cost, 
-                           level,
-                           -1 if startsWithAny(character.profession, profession) else 0)
-        return _calcit(**character[sk])
+        return skillExpense(character, sk)
     return sum(map(_calcy, skillsOf(character)))
                                          
 def showSkills(character):
@@ -180,7 +211,7 @@ def showSkills(character):
                                      ordinary,
                                      good, 
                                      amazing,
-                                     expense(cost, level, -1 if startsWithAny(character.profession, profession) else 0))
+                                     skillExpense(character, name))
         for x in childSkillsOf(character, name):
             showable.extend(_composeSkillTxt(**character.get(x)))
         if level>0 or showable:
@@ -254,6 +285,9 @@ def manageChar(character):
         def _quit(*junk):
             '''Leave the character editor'''
             return None
+        def _skexp(skillName, *junk):
+            '''Show additional information about a skill'''
+            return showSkillExpense(character, skillName)
         def _processCommand(commandsCollection):
             def _hlp(*junk):
                 '''Show this help info'''
@@ -264,7 +298,8 @@ def manageChar(character):
             commandsCollection['help']=_hlp
             return commandsCollection.get(command.strip("/"), _dflt)(*args)
         return _processCommand({"list": _lst,
-                                "quit": _quit})
+                                "quit": _quit,
+                                "skill": _skexp})
     def processInp(stat, *args):
         if stat.startswith("/"):
             return _specialCommand(stat, args)
@@ -276,7 +311,7 @@ def manageChar(character):
         try:
             showCharacter(character)
             return processInp(*raw_input("> ").lower().split())
-        except EOFError:
+        except EOFError, KeyboardInterrupt:
             return None
     while _inp()!=None:
         pass
