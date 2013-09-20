@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-19 23:20:56 MDT
+Date: 2013-09-19 23:25:02 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -196,6 +196,8 @@ on computers for grown-ups.
 =============
  - Add a die roller script
  - Make the code less hideously ugly
+ - Add perks/flaws
+ - Add psionic crap
 
 5 Legal Mumbo Jumbo 
 ====================
