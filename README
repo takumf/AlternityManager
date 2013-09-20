@@ -1,0 +1,175 @@
+                      Ishpeck's Alternity Thing
+                      =========================
+
+Author: Anthony "Ishpeck" Tedjamulia
+Date: 2013-09-19 23:00:36 MDT
+
+
+A  stupid  tool I  vomited  out  in  Pytho  to help  manage  Alternity
+character data.
+
+Table of Contents
+=================
+1 Quick Start
+2 Managing Character Data
+3 Exiting the Manager
+4 To-do list
+
+
+1 Quick Start 
+==============
+To make a new character, run the manager.py script with no arguments:
+
+ $ python manager.py
+
+When you exit, character's current data will automatically be saved to
+a file with the .alternity extension.
+
+To  retrieve character  data from  disk, make  sure the  last argument
+passed into the manager.py script is the name of the character file.
+
+ $ python manager.py my_character_data.alternity
+
+To e-mail the character data to your GM, try this:
+
+ $ python manager.py -d my_character_data.alternity | mail -s "My character" gamemaster@webealternityfans.org
+
+2 Managing Character Data 
+==========================
+To set values  for character data, type the data  name followed by the
+new  value you  want set  for  it.  Once  you hit  ENTER, the  updated
+character information should be shown.
+
+     My Example Character: Human, Combat Spec
+     Str:  7 ( 3 ) 0
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 42
+     > str 12
+     My Example Character: Human, Combat Spec
+     Str: 12 ( 6 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 47
+
+If you want  to increase or decrease the stat  relative to its current
+value, precede the value with a "+" or "-" like so...
+
+     My Example Character: Human, Combat Spec
+     Str: 12 ( 6 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 47
+     > str +1
+     My Example Character: Human, Combat Spec
+     Str: 13 ( 6 ) 2
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 48
+     > str -2
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+
+Set skill levels the same way:
+
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     > interaction 2
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     Interaction................ 2 [9/4/2] 6
+     > interaction +3
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     Interaction................ 5 [12/6/3] 21
+     
+Stat names are case insensitive.
+
+     > iNtErAcTiOn 2
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     Interaction................ 2 [9/4/2] 6
+     
+If  there  are any  spaces  in  the  stat's  name, replace  them  with
+underscores.
+
+     > computer_science 1  
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     Computer Science........... 1 [8/4/2] 7
+     Interaction................ 2 [9/4/2] 6
+
+Specialty  skills  also  work  and are  cleanly  annotated  under  the
+appropriate Broad skill.
+
+     > programming 1
+     My Example Character: Human, Combat Spec
+     Str: 11 ( 5 ) 1
+     Dex:  7 ( 3 ) 0
+     Con:  7 ( 3 ) 
+     Int:  7 ( 3 ) 0
+     Wil:  7 ( 3 ) 0
+     Per:  7 ( 3 ) 
+     Total ability scores: 46
+     Computer Science........... 1 [8/4/2] 7
+        Programming............. 1 [8/4/2] 4
+     Interaction................ 2 [9/4/2] 6
+
+3 Exiting the Manager 
+======================
+You quit by sending EOF.  That's  CTRL+Z in Windows systems and CTRL+D
+on computers for grown-ups.
+
+4 To-do list 
+=============
+ - Add a die roller script
+ - Make the code less hideously ugly
+
