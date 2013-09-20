@@ -243,7 +243,10 @@ def manageChar(character):
                 toggle=not toggle
             print ""
             return True
-        return {"list":_lst}.get(command.strip("/"), _dflt)(*args)
+        def _quit(*junk):
+            return None
+        return {"list": _lst,
+                "quit": _quit}.get(command.strip("/"), _dflt)(*args)
     def processInp(stat, *args):
         if stat.startswith("/"):
             return _specialCommand(stat, args)

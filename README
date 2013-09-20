@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-19 23:25:02 MDT
+Date: 2013-09-19 23:32:03 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -189,8 +189,8 @@ appropriate Broad skill.
 
 3 Exiting the Manager 
 ======================
-You quit by sending EOF.  That's  CTRL+Z in Windows systems and CTRL+D
-on computers for grown-ups.
+You quit by either typing the  "/quit" command or sending EOF.  That's
+CTRL+Z in Windows systems and CTRL+D on computers for grown-ups.
 
 4 To-do list 
 =============
