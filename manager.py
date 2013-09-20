@@ -19,9 +19,6 @@ def filt(proc, seq):
 def presentable(text):
     return " ".join(map(str.capitalize, text.split("_")))
 
-def presentable(text):
-    return " ".join(map(str.capitalize, text.split("_")))
-
 def sanitize(text):
     if text:
         return text.lower().replace(" ", "_")
