@@ -324,7 +324,9 @@ def saveCharacterData(charDat):
                      f.close())
     def _saveFile(fpth):
         return _write(open(fpth, "wt"))
-    return _saveFile("%s.alternity"%(sanitize(charDat.name)))
+    if charDat:
+        return _saveFile("%s.alternity"%(sanitize(charDat.name)))
+    return 1
 
 def main(proggy, *args):
     def loadCharacter(f):
@@ -334,14 +336,14 @@ def main(proggy, *args):
             return manageChar(ch)
         return _handle(first(eval(f.read()), f.close()))
     def _go():
-        if args and path.exists(args[-1]):
-            return loadCharacter(open(args[-1], "rt"))
-        return manageChar(createNewCharacter())
-    try:
-        return saveCharacterData(_go())
-    except Exception as e:
-        print e
-        return 1
+        try:
+            if args and path.exists(args[-1]):
+                return loadCharacter(open(args[-1], "rt"))
+            return manageChar(createNewCharacter())
+        except Exception as e:
+            print "\n\n%s\n\n"%(e)
+        return {}
+    return saveCharacterData(_go())
 
 if __name__=="__main__":
     exit(main(*argv))
