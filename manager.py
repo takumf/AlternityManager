@@ -171,7 +171,7 @@ def skillExpense(character, skillName):
         return sum(map(cc, range(il, level)))
     def _calcExpense(chProf, gainedFree, cost, profession, level, **rest):
         return _totalCost(partial(_costPerBoost, cost-1 if profession==chProf else cost),
-                          2 if gainedFree else 0,
+                          1 if gainedFree else 0,
                           level)
     return _calcExpense(character.profession,
                         skillName in freeSkillsFor(character),
