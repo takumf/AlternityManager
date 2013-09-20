@@ -152,7 +152,7 @@ def showAbilities(character):
         return nm
     for x in alternityAbilities():
         _abilShow(x, character.get(x))
-    print "Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))
+    print ("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40)
     return True
 
 def nmDisp(txt, indent):
@@ -229,7 +229,7 @@ def showSkills(character):
     map(_skilGroupShow, 
         map(_skillsUnderStat, 
             alternityAbilities()))
-    print "Total Skill Points Spent: %s"%(skillPointsSpent(character))
+    print ("Total Skill Points Spent: %s"%(skillPointsSpent(character))).rjust(40)
     return character
 
 def showCharacter(character):
