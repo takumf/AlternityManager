@@ -234,6 +234,7 @@ def manageChar(character):
             print "           Unknown command: %s"%(command)
             return True
         def _lst(*junk):
+            '''List all known stats'''
             print "==== Known stats..."
             toggle=False
             for x in sorted(character.keys()):
@@ -244,9 +245,19 @@ def manageChar(character):
             print ""
             return True
         def _quit(*junk):
+            '''Leave the character editor'''
             return None
-        return {"list": _lst,
-                "quit": _quit}.get(command.strip("/"), _dflt)(*args)
+        def _processCommand(commandsCollection):
+            def _hlp(*junk):
+                '''Show this help info'''
+                print "==== Known commands..."
+                for x in sorted(commandsCollection.keys()):
+                    print "\t/%s\t%s"%(x, commandsCollection.get(x).__doc__)
+                return True
+            commandsCollection['help']=_hlp
+            return commandsCollection.get(command.strip("/"), _dflt)(*args)
+        return _processCommand({"list": _lst,
+                                "quit": _quit})
     def processInp(stat, *args):
         if stat.startswith("/"):
             return _specialCommand(stat, args)

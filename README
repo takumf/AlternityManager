@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-19 23:32:03 MDT
+Date: 2013-09-19 23:39:35 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -34,6 +34,11 @@ passed into the manager.py script is the name of the character file.
 To e-mail the character data to your GM, try this:
 
  $ python manager.py -d my_character_data.alternity | mail -s "My character" gamemaster@webealternityfans.org
+
+To see the  list of available commands, type "/help"  in the character
+manager.
+
+ $ echo '/help' | python manager.py -d my_character_data.alternity
 
 2 Managing Character Data 
 ==========================
