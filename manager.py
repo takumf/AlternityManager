@@ -317,6 +317,15 @@ def manageChar(character):
         pass
     return character
 
+def saveCharacterData(charDat):
+    def _write(f):
+        return first(0,
+                     f.write("%s"%(charDat)),
+                     f.close())
+    def _saveFile(fpth):
+        return _write(open(fpth, "wt"))
+    return _saveFile("%s.alternity"%(sanitize(charDat.name)))
+
 def main(proggy, *args):
     def loadCharacter(f):
         def _handle(ch):
@@ -329,12 +338,7 @@ def main(proggy, *args):
             return loadCharacter(open(args[-1], "rt"))
         return manageChar(createNewCharacter())
     try:
-        x=_go()
-        fpth="%s.alternity"%(sanitize(x.name))
-        f=open(fpth, "wt")
-        f.write("%s"%(x))
-        f.close()
-        return 0
+        return saveCharacterData(_go())
     except Exception as e:
         print e
         return 1
