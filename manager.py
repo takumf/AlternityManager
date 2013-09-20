@@ -146,7 +146,7 @@ def showAbilities(character):
         def _resMod():
             rm=resmod(nm, val)
             if rm is not None:
-                return "%s%s"%("+" if rm>=0 else "-", rm)
+                return "%s%s"%("+" if rm>=0 else "", rm)
             return ""
         print "%s: %s ( %s ) %s"%(presentable(nm), ("%s"%(val)).rjust(2), halfish(val), _resMod())
         return nm
