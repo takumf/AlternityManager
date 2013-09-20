@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-19 23:02:49 MDT
+Date: 2013-09-19 23:06:54 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -14,6 +14,7 @@ Table of Contents
 2 Managing Character Data
 3 Exiting the Manager
 4 To-do list
+5 Legal Mumbo Jumbo
 
 
 1 Quick Start 
@@ -173,3 +174,8 @@ on computers for grown-ups.
  - Add a die roller script
  - Make the code less hideously ugly
 
+5 Legal Mumbo Jumbo 
+====================
+The Alternity  RPG belongs to  whoever it is  that ended up  buying it
+(not me).   I'm pretty  sure any  owner of the  game is  reserving all
+their rights like folks tend to do.
