@@ -233,7 +233,7 @@ def showSkills(character):
     return character
 
 def showCharacter(character):
-    print "%s: %s, %s"%(character.name, character.species, character.profession)
+    print " ==== %s: %s, %s"%(character.name, character.species, character.profession)
     showAbilities(character)
     showSkills(character)
     return character
@@ -273,7 +273,7 @@ def manageChar(character):
             return True
         def _lst(*junk):
             '''List all known stats'''
-            print "==== Known stats..."
+            print " ==== Known stats..."
             toggle=False
             for x in sorted(character.keys()):
                 print x.ljust(23),
@@ -291,7 +291,7 @@ def manageChar(character):
         def _processCommand(commandsCollection):
             def _hlp(*junk):
                 '''Show this help info'''
-                print "==== Known commands..."
+                print " ==== Known commands..."
                 for x in sorted(commandsCollection.keys()):
                     print "\t/%s\t%s"%(x, commandsCollection.get(x).__doc__)
                 return True
