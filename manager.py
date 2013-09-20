@@ -24,23 +24,39 @@ def sanitize(text):
         return text.lower().replace(" ", "_").replace("'", "_").replace("-","_")
     return None
 
-def genClassDef(data):
-    if not hasattr(data, "update"):
-        raise Exception("You gave me a poop data: %s"%(data))
-    cmd='''class _TmpStat(GenericStats):
+def note(*words):
+    print " ".join(words)
+    return True
+
+def msg(*words):
+    return note(" ====", *words)
+
+def inform(ret, *words):
+    return first(ret, note(*words))
+
+def _classDefLine():
+    return '''class _TmpStat(GenericStats):
     def _setter(self, k, v):
         self[k]=v
         return v\n'''
-    for x in data:
-        cmd+='''    %s=property(lambda s: s.get("%s"), lambda s,v: s._setter("%s", v))\n'''%(x, x, x)
+
+def _propGenLine(varnm):
+    return '''    %s=property(lambda s: s.get("%s"), lambda s,v: s._setter("%s", v))\n'''%(varnm, varnm, varnm)
+
+def _instTmp(deftxt, data):
     try:
-        exec cmd
-        return _TmpStat(data)
+        exec deftxt
     except:
-        print "Fail\n\n"
-        print cmd
-        print "\n\n"
-    return {}
+        return inform({}, "Fail\n\n%s\n\n"%(deftxt))
+    return _TmpStat(data)
+
+def genClassDef(data):
+    if not hasattr(data, "update"):
+        raise Exception("You gave me a poop data: %s"%(data))
+    return _instTmp(reduce(lambda c,v: c+_propGenLine(v), 
+                           data, 
+                           _classDefLine()),
+                    data)
 
 def genDat(data):
     return genClassDef(dict(data))
@@ -57,7 +73,7 @@ def speciesFreeSkills():
                    'weren':"athletics,unarmed attack,stamina,knowledge,awareness,interaction".split(",")})
 
 def freeSkillsFor(character):
-    return speciesFreeSkills().get(sanitize(character.species))
+    return speciesFreeSkills().get(sanitize(character.species), [])
 
 def halfish(value):
     return (value-(value%2))/2
@@ -97,11 +113,11 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return initializeAbilities().items()
     def _skil():
         return initializeSkills().items()
-    def _both():
+    def _numerics():
         return _abil()+_skil()
     def _vitals():
         return [("name", nm), ("species", sp), ("profession", pr)]
-    return genDat(_both()+_vitals())
+    return genDat(_numerics()+_vitals())
 
 def skillsOf(character):
     global knownCharacterSkills
@@ -125,42 +141,38 @@ def abilitiesOf(character):
 def resmod(nm, val):
     if nm in "con per".split():
         return None
-    if val < 5: 
+    if val<5:
         return -2
-    if val < 7:
+    if val<7:
         return -1
-    if val > 18:
+    if val>18:
         return 5
-    if val > 16:
-        return 4
-    if val > 14:
-        return 3
-    if val > 12:
-        return 2
-    if val > 10:
-        return 1
-    return 0
+    return max(0, (val-9)/2)
+
+def plusify(number):
+    if number is not None:
+        return "%s%s"%("+" if number>=0 else "", number)
+    return ""
 
 def showAbilities(character):
     def _abilShow(nm, val):
         def _resMod():
-            rm=resmod(nm, val)
-            if rm is not None:
-                return "%s%s"%("+" if rm>=0 else "", rm)
-            return ""
-        print "%s: %s ( %s ) %s"%(presentable(nm), ("%s"%(val)).rjust(2), halfish(val), _resMod())
-        return nm
-    for x in alternityAbilities():
-        _abilShow(x, character.get(x))
-    print ("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40)
-    return True
+            return plusify(resmod(nm, val))
+        def _statVal():
+            return ("%s"%(val)).rjust(2)
+        return inform(nm, "%s: %s ( %s ) %s"%(presentable(nm), 
+                                              _statVal(), 
+                                              halfish(val), 
+                                              _resMod()))
+    map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
+    return note(("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
 
 def nmDisp(txt, indent):
     return ("%s%s"%("" if indent else "   ", txt)).ljust(27, ".")
 
-def startsWithAny(this, these):
-    for c in these.upper():
-        if this.upper().startswith(c):
+def startsWithAny(subject, startChars):
+    for c in startChars.upper():
+        if subject.upper().startswith(c):
             return True
     return False
 
@@ -183,16 +195,15 @@ def showSkillExpense(character, skillNameRaw):
         professionMatches=startsWithAny(character.profession, 
                                         profession)
         professionBenefit=-1 if professionMatches else 0
-        print " ==== %s: Cost %s.  %s points spent"%(
+        msg("%s: Cost %s.  %s points spent"%(
             presentable(skillName), 
             character.get(skillNameRaw).cost+professionBenefit,
-            skillExpense(character, skillName) )
+            skillExpense(character, skillName) ))
         if skillName in freeSkillsFor(character):
-            print "    This is a free skill for your species"
+            note("    This is a free skill for your species")
         if professionMatches:
-            print "    This skill falls under your profession"
-        print ""
-        return True
+            note("    This skill falls under your profession")
+        return note("")
     return _se(sanitize(skillNameRaw))
 
 def skillPointsSpent(character):
@@ -229,24 +240,43 @@ def showSkills(character):
     map(_skilGroupShow, 
         map(_skillsUnderStat, 
             alternityAbilities()))
-    print ("Total Skill Points Spent: %s"%(skillPointsSpent(character))).rjust(40)
-    return character
+    return inform(character, ("Total Skill Points Spent: %s"%(skillPointsSpent(character))).rjust(40))
 
 def showCharacter(character):
-    print " ==== %s: %s, %s"%(character.name, character.species, character.profession)
+    msg("%s: %s, %s"%(character.name, character.species, character.profession))
     showAbilities(character)
     showSkills(character)
     return character
 
-def createNewCharacter():
-        return initializeCharacter(raw_input("Name: "),
-                                   raw_input("Species: "),
-                                   raw_input("Profession: "))
+def consumeInput():
+    return raw_input("> ").lower().split()
 
-def manageChar(character):
+def validatePrompt(promptTxt, validatorFunc):
+    def _getInput():
+        return raw_input("%s: "%(promptTxt))
+    txt=_getInput()
+    while not validatorFunc(txt):
+        txt=_getInput()
+    return txt
+
+def namePrompt():
+    return validatePrompt("Name", lambda x: True)
+
+def speciesPrompt():
+    return validatePrompt("Species", lambda x: True)
+
+def professionPrompt():
+    return validatePrompt("Promptofession", lambda x: True)
+
+def createNewCharacter():
+        return initializeCharacter(namePrompt(),
+                                   speciesPrompt(),
+                                   professionPrompt())
+
+def horriblyUglyBloatyCruftyManageChar(character):
     def boostSkill(stat, amount):
         character[stat].level+=amount
-        return True
+        return msg("Boosted %s by %s"%(stat, amount))
     def _boost(stat, amount):
         if stat in skillsOf(character).keys():
             return boostSkill(stat, amount)
@@ -257,31 +287,32 @@ def manageChar(character):
         return True
     def _set(stat, amount):
         if stat in skillsOf(character).keys():
-            return setSkill(stat, amount)
+            if hasattr(amount, "real"):
+                return setSkill(stat, amount)
+            return msg("Need a number to set for the skill level")
         character[stat]=amount
         return True
     def _adjust(stat, val=None, *args):
         if val is None:
-            print "       No value given for %s"%(stat)
-            return True
+            return msg("No value given for %s"%(stat))
         if val.startswith("+") or val.startswith("-"):
             return _boost(stat, int(val))
+        if stat in alternityAbilities() and not val.isdigit():
+            return msg("Need a number for ability setting.")
         return _set(stat, int(val) if val.isdigit() else val)
     def _specialCommand(command, args):
         def _dflt(*junk):
-            print "           Unknown command: %s"%(command)
-            return True
+            return msg("           Unknown command: %s"%(command))
         def _lst(*junk):
             '''List all known stats'''
-            print " ==== Known stats..."
+            msg("Known stats...")
             toggle=False
             for x in sorted(character.keys()):
                 print x.ljust(23),
                 if toggle:
                     print ""
                 toggle=not toggle
-            print ""
-            return True
+            return msg("")
         def _quit(*junk):
             '''Leave the character editor'''
             return None
@@ -291,7 +322,7 @@ def manageChar(character):
         def _processCommand(commandsCollection):
             def _hlp(*junk):
                 '''Show this help info'''
-                print " ==== Known commands..."
+                msg("Known commands...")
                 for x in sorted(commandsCollection.keys()):
                     print "\t/%s\t%s"%(x, commandsCollection.get(x).__doc__)
                 return True
@@ -305,17 +336,19 @@ def manageChar(character):
             return _specialCommand(stat, args)
         if stat in character:
             return _adjust(stat, *args)
-        print "Unknown stat: %s"%(stat)
-        return True
+        return msg("Unknown stat: %s"%(stat))
     def _inp():
         try:
             showCharacter(character)
-            return processInp(*raw_input("> ").lower().split())
+            return processInp(*consumeInput())
         except EOFError, KeyboardInterrupt:
             return None
     while _inp()!=None:
         pass
     return character
+
+def manageChar(character):
+    return horriblyUglyBloatyCruftyManageChar(character)
 
 def saveCharacterData(charDat):
     def _write(f):
@@ -336,13 +369,9 @@ def main(proggy, *args):
             return manageChar(ch)
         return _handle(first(eval(f.read()), f.close()))
     def _go():
-        try:
-            if args and path.exists(args[-1]):
-                return loadCharacter(open(args[-1], "rt"))
-            return manageChar(createNewCharacter())
-        except Exception as e:
-            print "\n\n%s\n\n"%(e)
-        return {}
+        if args and path.exists(args[-1]):
+            return loadCharacter(open(args[-1], "rt"))
+        return manageChar(createNewCharacter())
     return saveCharacterData(_go())
 
 if __name__=="__main__":
