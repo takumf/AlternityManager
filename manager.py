@@ -229,8 +229,24 @@ def manageChar(character):
         if val.startswith("+") or val.startswith("-"):
             return _boost(stat, int(val))
         return _set(stat, int(val) if val.isdigit() else val)
-        
+    def _specialCommand(command, args):
+        def _dflt(*junk):
+            print "           Unknown command: %s"%(command)
+            return True
+        def _lst(*junk):
+            print "==== Known stats..."
+            toggle=False
+            for x in sorted(character.keys()):
+                print x.ljust(23),
+                if toggle:
+                    print ""
+                toggle=not toggle
+            print ""
+            return True
+        return {"list":_lst}.get(command.strip("/"), _dflt)(*args)
     def processInp(stat, *args):
+        if stat.startswith("/"):
+            return _specialCommand(stat, args)
         if stat in character:
             return _adjust(stat, *args)
         print "Unknown stat: %s"%(stat)
