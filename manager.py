@@ -183,7 +183,7 @@ def showSkillExpense(character, skillNameRaw):
         professionMatches=startsWithAny(character.profession, 
                                         profession)
         professionBenefit=-1 if professionMatches else 0
-        print "%s: Cost %s.  %s points spent"%(
+        print " ==== %s: Cost %s.  %s points spent"%(
             presentable(skillName), 
             character.get(skillNameRaw).cost+professionBenefit,
             skillExpense(character, skillName) )
