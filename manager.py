@@ -2,6 +2,9 @@ from sys import argv, exit
 from os import path
 from functools import partial
 from itertools import starmap
+from alternityGeneral import *
+import commands
+import manip
 
 knownCharacterSkills=None
 knownGeneralSkills={}
@@ -60,9 +63,6 @@ def genClassDef(data):
 
 def genDat(data):
     return genClassDef(dict(data))
-
-def alternityAbilities():
-    return "str dex con int wil per".split()
 
 def speciesFreeSkills():
     return genDat({'human':"athletics,vehicle_operation,stamina,knowledge,awareness,interaction".split(","),
@@ -266,7 +266,7 @@ def showCharacter(character):
     return character
 
 def consumeInput():
-    return raw_input("> ").lower().split()
+    return raw_input("> ").strip().lower().split()
 
 def validatePrompt(promptTxt, validatorFunc):
     def _getInput():
@@ -290,89 +290,47 @@ def createNewCharacter():
                                    speciesPrompt(),
                                    professionPrompt())
 
-def changler(source, key, val):
-    return genDat(source.items()+[(key, val)])
+def managerSpecialCommand(character, command, args):
+    def _cmd(cmd):
+        if cmd in dir(commands):
+            return getattr(commands, cmd)(character, *args)
+        print "Unknown command: %s"%(command)
+        return True
+    return _cmd(command.strip("/"))
 
-def horriblyUglyBloatyCruftyManageChar(character):
-    def boostSkill(stat, amount):
-        character[stat].level+=amount
-        return msg("Boosted %s by %s"%(stat, amount))
-    def _boost(stat, amount):
-        if stat in skillsOf(character).keys():
-            return boostSkill(stat, amount)
-        character[stat]+=amount
-        return True
-    def setSkill(stat, amount):
-        character[stat].purchased=True if amount else False
-        if character.get(stat).parent is not None:
-            character[stat].level=amount
-        return True
-    def _set(stat, amount):
-        if stat in skillsOf(character).keys():
-            if hasattr(amount, "real"):
-                return setSkill(stat, amount)
-            return msg("Need a number to set for the skill level")
-        character[stat]=amount
-        return True
-    def _adjust(stat, val=None, *args):
-        if val is None:
-            return msg("No value given for %s"%(stat))
-        if val.startswith("+") or val.startswith("-"):
-            return _boost(stat, int(val))
-        if stat in alternityAbilities() and not val.isdigit():
-            return msg("Need a number for ability setting.")
-        return _set(stat, int(val) if val.isdigit() else val)
-    def _specialCommand(command, args):
-        def _dflt(*junk):
-            return msg("           Unknown command: %s"%(command))
-        def _lst(*junk):
-            '''List all known stats'''
-            msg("Known stats...")
-            toggle=False
-            for x in sorted(character.keys()):
-                print x.ljust(23),
-                if toggle:
-                    print ""
-                toggle=not toggle
-            return msg("")
-        def _quit(*junk):
-            '''Leave the character editor'''
-            return None
-        def _skexp(skillName, *junk):
-            '''Show additional information about a skill'''
-            return showSkillExpense(character, skillName)
-        def _processCommand(commandsCollection):
-            def _hlp(*junk):
-                '''Show this help info'''
-                msg("Known commands...")
-                for x in sorted(commandsCollection.keys()):
-                    print "\t/%s\t%s"%(x, commandsCollection.get(x).__doc__)
-                return True
-            commandsCollection['help']=_hlp
-            return commandsCollection.get(command.strip("/"), _dflt)(*args)
-        return _processCommand({"list": _lst,
-                                "quit": _quit,
-                                "skill": _skexp})
-    def processInp(stat=None, *args):
-        if stat is None:
-            return msg("")
-        if stat.startswith("/"):
-            return _specialCommand(stat, args)
-        if stat in character:
-            return _adjust(stat, *args)
-        return msg("Unknown stat: %s"%(stat))
-    def _inp():
+def managerStatManipulation(character, stat, args):
+    return manip.genericManipulations(character, stat, *args)
+
+def signifyResult(character, result, message, *junk):
+    showCharacter(character)
+    print "\n%s\n"%(message)
+    return result
+
+def handleManagerInput(character):
+    def _procInCmd(command=None, *data):
+        def _callMe():
+            if command.startswith("/"):
+                return managerSpecialCommand
+            return managerStatManipulation
+        if command is None:
+            return True
+        return signifyResult(character, 
+                             *(_callMe()(character, command, data)))
+    def _safelyConsumeInput():
         try:
-            showCharacter(character)
-            return processInp(*consumeInput())
-        except EOFError, KeyboardInterrupt:
-            return None
-    while _inp()!=None:
+            return consumeInput()
+        except EOFError:
+            return ["/quit"]
+    return _procInCmd(*_safelyConsumeInput())
+
+def managerLoop(character):
+    showCharacter(character)
+    while handleManagerInput(character):
         pass
     return character
 
 def manageChar(character):
-    return horriblyUglyBloatyCruftyManageChar(character)
+    return managerLoop(character)
 
 def saveCharacterData(charDat):
     def _write(f):
@@ -399,4 +357,8 @@ def main(proggy, *args):
     return saveCharacterData(_go())
 
 if __name__=="__main__":
-    exit(main(*argv))
+    try:
+        exit(main(*argv))
+    except KeyboardInterrupt:
+        exit(0)
+
