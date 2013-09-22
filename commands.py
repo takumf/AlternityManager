@@ -23,3 +23,12 @@ def help(*args, **more):
                             getattr(module, x).__doc__)
         return (True, "Known commands...\n%s\n"%(msg))
     return _doHelp(modules[__name__])
+
+def list(character, *args, **more):
+    def _listStats(stats):
+        def _spaceTxt(txt):
+            return txt.ljust(30)
+        def _composeLst(interval):
+            return " ".join(map(_spaceTxt, stats[interval:interval+2]))
+        return "\n".join(map(_composeLst, range(0,len(stats), 2)))
+    return (True, "Known stats...\n%s"%(_listStats(sorted(character.keys()))))
