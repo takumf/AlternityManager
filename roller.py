@@ -48,8 +48,8 @@ def rollReport(tn, results):
                 return "Critical failure."
             return "Failure."
         def _txt(*intersperses):
-            return "%s %s (%s) vs [%s/%s/%s]\n"%intersperses
-        return _txt(_narrate(*tn), value, arithmetic, *tn)
+            return "%s -> %s %s (%s) vs [%s/%s/%s]\n"%intersperses
+        return _txt(rollNotation, _narrate(*tn), value, arithmetic, *tn)
     return _finalize(*results)
 
 def rollVersusStat(character, stat, situation=0, *stipulations):
