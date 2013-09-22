@@ -301,9 +301,9 @@ def managerSpecialCommand(character, command, args):
 def managerStatManipulation(character, stat, args):
     return manip.genericManipulations(character, stat, *args)
 
-def signifyResult(character, result, message, *junk):
+def signifyResult(character, result, *messages):
     showCharacter(character)
-    print "\n%s\n"%(message)
+    print "\n%s\n"%(" ".join(messages))
     return result
 
 def handleManagerInput(character):
