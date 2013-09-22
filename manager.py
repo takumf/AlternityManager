@@ -95,7 +95,7 @@ def resmod(nm, val):
     return plusify(_rawModCalc())
 
 def abilityCalc(name, baseScore):
-    return [baseScore, halfish(baseScore), resmod(name, baseScore)]
+    return (baseScore, halfish(baseScore), resmod(name, baseScore))
 
 def skillTnCalc(baseScore):
     return [baseScore, halfish(baseScore), quarterish(baseScore)]
@@ -171,21 +171,15 @@ def plusify(number):
 
 def showAbilities(character):
     def _abilShow(nm, val):
-        def _fixed(value):
-            return ("%s"%(presentable(value))).rjust(2)
-        def _tidyUpAbilityData(values):
-            return map(_fixed, values)
+        def _cleanit(component):
+            return ("%s"%(presentable(str(component)))).rjust(2)
+        def _statLine(base, untr, res):
+            return "%s ( %s ) %s"%(base, untr, res)
+        def _tidyStat():
+            return _statLine(*map(_cleanit, abilityCalc(nm,val)))
         def _presentValues():
-            return "%s: %s ( %s ) %s"%_tidyUpAbilityData(abilityCalc(nm, val))
+            return "%s: %s"%(presentable(nm), _tidyStat())
         return inform(nm, _presentValues())
-        # def _resMod():
-        #     return resmod(nm, val)
-        # def _statVal():
-        #     return ("%s"%(val)).rjust(2)
-        # return inform(nm, "%s: %s ( %s ) %s"%(presentable(nm), 
-        #                                       _statVal(), 
-        #                                       halfish(val), 
-        #                                       _resMod()))
     map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
     return note(("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
 
