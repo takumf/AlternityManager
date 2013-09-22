@@ -25,6 +25,7 @@ def help(*args, **more):
     return _doHelp(modules[__name__])
 
 def list(character, *args, **more):
+    '''List all known character data.'''
     def _listStats(stats):
         def _spaceTxt(txt):
             return txt.ljust(30)
