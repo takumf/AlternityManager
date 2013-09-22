@@ -280,7 +280,7 @@ def speciesPrompt():
     return validatePrompt("Species", lambda x: True)
 
 def professionPrompt():
-    return validatePrompt("Promptofession", lambda x: True)
+    return validatePrompt("Profession", lambda x: True)
 
 def createNewCharacter():
         return initializeCharacter(namePrompt(),
