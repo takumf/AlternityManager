@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-19 23:57:41 MDT
+Date: 2013-09-21 21:19:57 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -199,10 +199,12 @@ CTRL+Z in Windows systems and CTRL+D on computers for grown-ups.
 
 4 To-do list 
 =============
- - Add a die roller script
- - Make the code less hideously ugly
- - Add perks/flaws
- - Add psionic crap
+There is a to-do and bug list kept in Trello for LOL's.
+
+[https://trello.com/b/brUpIelb/alternitymanager]
+
+Which I'm marginally (not ordinarily or amazingly) more likely to keep
+up-to-date than this README file.
 
 5 Legal Mumbo Jumbo 
 ====================
