@@ -65,10 +65,10 @@ def alternityAbilities():
     return "str dex con int wil per".split()
 
 def speciesFreeSkills():
-    return genDat({'human':"athletics,vehicle operation,stamina,knowledge,awareness,interaction".split(","),
-                   'fraal':"vehicle operation,knowledge,awareness,resolve,interaction,telepathy".split(","),
-                   'mechalus':"athletics,vehicle operation,stamina,knowledge,computer science,awareness".split(","),
-                   'sesheyan':"melee weapons,acrobatics,stamina,knowledge,awareness,interaction".split(","),
+    return genDat({'human':"athletics,vehicle_operation,stamina,knowledge,awareness,interaction".split(","),
+                   'fraal':"vehicle_operation,knowledge,awareness,resolve,interaction,telepathy".split(","),
+                   'mechalus':"athletics,vehicle_operation,stamina,knowledge,computer_science,awareness".split(","),
+                   'sesheyan':"melee_weapons,acrobatics,stamina,knowledge,awareness,interaction".split(","),
                    "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
                    'weren':"athletics,unarmed attack,stamina,knowledge,awareness,interaction".split(",")})
 
@@ -98,9 +98,16 @@ def rawSkills():
     return _fcrap(open("skills.py", "rt"))
 
 def initializeSkills():
-    def _nsk(stat, parent, profession, untrained, name, cost):
+    def _nsk(stat, parent, profession, untrained, name, cost, purchased=False):
         try:
-            return genDat({'stat':stat, 'profession':profession, 'untrained':untrained, 'name':name, 'cost':int(cost), 'parent':parent, 'level': 0}.items())
+            return genDat({'stat':stat, 
+                           'profession':profession, 
+                           'untrained':untrained, 
+                           'name':name, 
+                           'cost':int(cost), 
+                           'parent':parent, 
+                           'purchased':purchased,
+                           'level': 0})
         except:
             print {'stat':stat, 'profession':profession, 'untrained':untrained, 'name':name, 'cost':cost, 'parent':parent}
         return {}
@@ -109,10 +116,16 @@ def initializeSkills():
     return genDat(_handleSkill(rawSkills()))
 
 def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
+    def _applySpeciesFreebies(pair):
+        def _speciesFreebies(skillName, skillContent, *extraneousPoop):
+            if skillName in speciesFreeSkills().get(sp.lower(), []):
+                skillContent.purchased=True
+            return (skillName, skillContent)
+        return _speciesFreebies(*pair)
     def _abil():
         return initializeAbilities().items()
     def _skil():
-        return initializeSkills().items()
+        return map(_applySpeciesFreebies, initializeSkills().items())
     def _numerics():
         return _abil()+_skil()
     def _vitals():
@@ -212,20 +225,21 @@ def skillPointsSpent(character):
     return sum(map(_calcy, skillsOf(character)))
                                          
 def showSkills(character):
-    def _composeSkillTxt(name, untrained, parent, stat, cost, level, profession, **remaining):
-        ordinary=character.get(stat)+level
+    def _composeSkillTxt(name, untrained, parent, stat, cost, level, profession, purchased=False, **remaining):
+        levelBonus=level if parent else 0
+        ordinary=character.get(stat)+levelBonus if purchased or level>0 else 0
         good=halfish(ordinary)
         amazing=halfish(good)
         showable=[]
         basic="%s %s [%s/%s/%s] %s"%(nmDisp(presentable(name), not parent),
-                                     level,
+                                     level if parent else ".",
                                      ordinary,
                                      good, 
                                      amazing,
                                      skillExpense(character, name))
         for x in childSkillsOf(character, name):
             showable.extend(_composeSkillTxt(**character.get(x)))
-        if level>0 or showable:
+        if level>0 or purchased or showable:
             return [basic]+showable
         return showable
     def _showSkill(**things):
@@ -283,7 +297,9 @@ def horriblyUglyBloatyCruftyManageChar(character):
         character[stat]+=amount
         return True
     def setSkill(stat, amount):
-        character[stat].level=amount
+        character[stat].purchased=True if amount else False
+        if character.get(stat).parent is not None:
+            character[stat].level=amount
         return True
     def _set(stat, amount):
         if stat in skillsOf(character).keys():
