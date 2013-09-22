@@ -15,10 +15,41 @@ def speciesFreeSkills():
                    'mechalus':"athletics,vehicle_operation,stamina,knowledge,computer_science,awareness".split(","),
                    'sesheyan':"melee_weapons,acrobatics,stamina,knowledge,awareness,interaction".split(","),
                    "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
-                   'weren':"athletics,unarmed attack,stamina,knowledge,awareness,interaction".split(",")})
+                   'weren':"athletics,unarmed_attack,stamina,knowledge,awareness,interaction".split(",")})
 
 def freeSkillsFor(character):
     return speciesFreeSkills().get(sanitize(character.species), [])
+
+def freeSkillPointsFor(character):
+    return { 4:15,
+             5:20,
+             6:25,
+             7:30,
+             8:35,
+             9:40,
+             10:45,
+             11:50,
+             12:55,
+             13:60,
+             14:65,
+             15:70,
+             16:75,
+        }[character.int]
+def broadSkillsAtCharacterCreationFor(character):
+    return { 4:2,
+             5:2,
+             6:3,
+             7:3,
+             8:4,
+             9:4,
+             10:5,
+             11:5,
+             12:6,
+             13:6,
+             14:7,
+             15:7,
+             16:8,
+        }[character.int]
 
 def halfish(value):
     return (value-(value%2))/2
@@ -90,6 +121,10 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return [("name", nm), ("species", sp), ("profession", pr)]
     return genDat(_numerics()+_vitals())
 
+def purchasedGenSkillsOf(character):
+    freeSkills = freeSkillsFor(character)
+    return genDat(filt(lambda k,v: v.get("parent")==None and v.get("purchased") and v.get('name') not in freeSkills, skillsOf(character).items()))
+    
 def genSkillsOf(character, stat):
     global knownGeneralSkills
     if stat not in knownGeneralSkills:
@@ -120,7 +155,7 @@ def showAbilities(character):
             return "%s: %s"%(presentable(nm), _tidyStat())
         return inform(nm, _presentValues())
     map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
-    return note(("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
+    return note(("Total ability scores: %s (60 free)"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
 
 def nmDisp(txt, indent):
     return ("%s%s"%("" if indent else "   ", txt)).ljust(27, ".")
@@ -133,12 +168,17 @@ def startsWithAny(subject, startChars):
 
 def skillExpense(character, skillName):
     def _costPerBoost(cost, level):
-        return (cost-1)+level
-    def _totalCost(cc, il, level):
-        return sum(map(cc, range(il, level)))
-    def _calcExpense(chProf, gainedFree, cost, profession, level, **rest):
-        return _totalCost(partial(_costPerBoost, cost-1 if profession==chProf else cost),
-                          1 if gainedFree else 0,
+        return (cost)+level
+    def _totalCost(cc, level):
+        return sum(map(cc, range(0, level)))
+    def _professionMatches(skillProf, chProf):
+        return skillProf[0].lower() == chProf[0].lower()
+    def _calcExpense(chProf, gainedFree, cost, profession, level, parent, purchased, **rest):
+        if gainedFree or not purchased:
+            return 0
+        if parent is None:
+            return cost-1 if _professionMatches(profession, chProf) else cost
+        return _totalCost(partial(_costPerBoost, cost-1 if _professionMatches(profession,chProf) else cost),
                           level)
     return _calcExpense(character.profession,
                         skillName in freeSkillsFor(character),
@@ -191,7 +231,10 @@ def showSkills(character):
     map(_skilGroupShow, 
         map(_skillsUnderStat, 
             alternityAbilities()))
-    return inform(character, ("Total Skill Points Spent: %s"%(skillPointsSpent(character))).rjust(40))
+    return inform(character, 
+                  ("Skill Points Spent:".rjust(30) + " %s (%s free)\n"%(skillPointsSpent(character), freeSkillPointsFor(character))),
+                  ("Broad Skills purchased:".rjust(29) + " %s (%s at creation)"%(len(purchasedGenSkillsOf(character)), broadSkillsAtCharacterCreationFor(character))))
+
 
 def showCharacter(character):
     msg("%s: %s, %s"%(character.name, character.species, character.profession))
