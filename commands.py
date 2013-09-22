@@ -38,7 +38,7 @@ def list(character, *args, **more):
     return (True, "Known stats...\n%s"%(_listStats(sorted(character.keys()))))
 
 def newskill(character, stat=None, name=None, cost=4, parent=None, profession="-", untrained=True, *junk):
-    '''Add a new skill to the character data.  Example: /newskill mandarin_language 3 knowledge'''
+    '''Add a new skill to the character data.  Example: /newskill int mandarin_language 4 knowledge'''
     if name in character:
         return (True, "%s already appears to exist in character data"%(name))
     if not stat or not name:
