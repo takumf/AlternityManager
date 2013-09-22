@@ -1,0 +1,197 @@
+str,armor operation,7,C,True    
+str,combat armor,3,C,True
+str,powered armor,4,C,False
+
+str,athletics,3,-,True
+str,climb,2,-,True
+str,jump,1,-,True
+str,throw,2,-,True
+
+str,heavy weapons,6,C,True
+str,direct fire,4,C,True
+str,indirect fire,4,C,True
+
+str,melee weapons,6,C,True
+str,blade,3,C,True
+str,bludgeon,3,C,True
+str,Powered Weapon,4,C,True
+
+str,unarmed attack,5,-,True
+str,brawl,3,C,True
+str,power martial arts,5,CF,False
+
+con,movement,3,-,True
+con,race,2,-,False
+con,swim,1,-,False
+con,Trailblazing,3,F,True
+
+con,stamina,3,-,True
+con,endurance,4,C,True
+con,resist pain,4,C,True
+
+con,survival,5,CF,True
+con,survival training,3,CF,True
+
+dex,acrobatics,7,F,True
+dex,daredevil,4,-,True
+dex,defensive martial arts,5,CF,False
+dex,dodge,4,CF,True
+dex,fall,2,F,True
+dex,flight,2,-,True
+dex,Zero Gravity Training,2,CT,True
+
+dex,manipulation,6,-,True
+dex,lockpick,4,F,True
+dex,pickpocket,4,F,True
+dex,prestidigitation,3,D,True
+
+dex,New Ranged Weapons,6,C,True
+dex,pistol,4,C,True
+dex,rifle,4,C,True
+dex,smg,4,C,True
+
+dex,Old Ranged Wepaons,7,C,True
+dex,bow,3,C,True
+dex,crossbow,3,C,True
+dex,flintlock,4,C,True
+dex,sling,4,C,True
+
+dex,stealth,7,F,True
+dex,hide,4,F,True
+dex,shadow,4,F,True
+dex,sneak,5,F,True
+
+dex,vehicle operation,3,-,True
+dex,air vehicle,5,T,False
+dex,land vehicle,3,T,True
+dex,space vehicle,5,T,False
+dex,water vehicle,3,T,True
+
+int,business,4,D,True
+int,corporate,3,D,True
+int,illicit business,3,DF,True
+int,small business,3,D,True
+
+int,computer science,7,T,True
+int,hacking,5,T,False
+int,hardware,4,T,True
+int,programming,4,T,True
+
+int,demolitions,6,CT,True
+int,disarm,4,T,True
+int,Scratch built,4,T,False
+int,set explosives,3,CT,True
+
+int,knowledge,3,-,True
+int,Computer operation,1,-,False
+int,deduce,2,-,True
+int,first aid,2,-,False
+int,language,1,-,False
+
+int,law,5,DF,True
+int,court procedures,3,D,True
+int,law enforcement,3,CF,True
+
+int,life science,7,T,True
+int,biology,3,T,True
+int,botany,3,T,True
+int,genetics,3,T,True
+int,xenology,4,T,False
+int,zoology,3,T,True
+
+int,medical science,7,T,True
+int,Medical knowledge,3,T,True
+int,psychology,3,T,True
+int,surgery,5,T,False
+int,treatment,4,T,False
+int,xenomedicine,3,T,False
+
+int,navigation,6,T,True
+int,drivespace astrogation,4,T,False
+int,astrogation system,3,T,True
+int,surface navigation,3,T,True
+
+int,physical science,7,T,True
+int,astronomy,3,T,True
+int,chemistry,3,T,True
+int,physics,3,T,True
+int,planetology,3,T,True
+
+int,security,5,CF,True
+int,protection protocols,3,CF,True
+int,security devices,3,FT,True
+
+int,system operation,4,-,True
+int,communications,3,DT,True
+int,defenses,3,CT,True
+int,engineering,3,CT,True
+int,sensors,3,FT,True
+int,weapons,3,CT,True
+
+int,tactics,7,T,True
+int,infantry tactics,3,C,True
+int,space tactics,3,T,True
+int,vehicle tactics,3,CT,True
+
+int,technical science,7,T,True
+int,inventing,4,T,True
+int,juryrig,3,T,True
+int,repair,3,T,True
+int,technical knowledge,3,T,True
+
+wil,administration,4,D,True
+wil,bureaucracy,3,D,True
+wil,management,3,D,True
+
+wil,animal handling,3,-,True
+wil,animal riding,1,-,True
+wil,animal training,1,-,True
+
+wil,awareness,3,-,True
+wil,intuition,3,-,True
+wil,perception,2,-,True
+
+wil,creativity,4,-,True
+
+wil,investigate,7,FT,True
+wil,interrogate,4,CF,True
+wil,search,4,FT,True
+wil,track,4,F,True
+
+wil,resolve,5,-,True
+wil,mental resolve,3,-,True
+wil,physical resolve,3,-,True
+
+wil,street smart,5,F,True
+wil,criminal elements,3,F,True
+wil,street knowledge,3,F,True
+
+wil,teach,5,DT,True
+
+per,culture,5,D,True
+per,diplomacy,3,D,True
+per,Etiquette,2,D,False
+per,first encounter,3,D,False
+
+per,deception,5,DF,True
+per,bluff,3,DF,True
+per,bribe,3,DF,True
+per,gamble,3,DF,True
+
+per,entertainment,4,DF,True
+per,act,2,DF,True
+per,dance,2,DF,True
+per,musical instrument,2,DF,False
+per,sing,2,DF,True
+
+per,interaction,3,-,True
+per,bargian,3,DT,True
+per,charm,3,DF,True
+per,interview,3,DF,True
+per,intimidate,3,C,True
+per,seduce,3,DF,True
+per,taunt,2,-,True
+
+per,leadership,4,-,True
+per,command,4,CD,True
+per,inspire,4,CD,False
