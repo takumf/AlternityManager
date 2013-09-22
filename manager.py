@@ -6,7 +6,6 @@ from alternityGeneral import *
 import commands
 import manip
 
-#knownCharacterSkills=None
 knownGeneralSkills={}
 
 def speciesFreeSkills():
