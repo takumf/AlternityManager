@@ -41,8 +41,12 @@ def boostSkillValue(character, skill, val):
                                                 character[skill].level))
 
 def skillManipulation(character, stat, val, args):
+    def _purchased():
+        if character[stat].parent:
+            return character[stat].level
+        return "trained" if character[stat].purchased else "untrained"
     def _report():
-        return (True, "%s is currently %s"%(stat, character[stat].level))        
+        return (True, "%s is currently %s"%(stat, _purchased()))
     if val is None:
         return _report()
     if val.isdigit():
