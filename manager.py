@@ -81,8 +81,21 @@ def halfish(value):
 def quarterish(value):
     return halfish(halfish(value))
 
-def abilityCalc(baseScore):
-    return [baseScore, halfish(baseScore)]
+def resmod(nm, val):
+    def _rawModCalc():
+        if nm in "con per".split():
+            return None
+        if val<5:
+            return -2
+        if val<7:
+            return -1
+        if val>18:
+            return 5
+        return max(0, (val-9)/2)
+    return plusify(_rawModCalc())
+
+def abilityCalc(name, baseScore):
+    return [baseScore, halfish(baseScore), resmod(name, baseScore)]
 
 def skillTnCalc(baseScore):
     return [baseScore, halfish(baseScore), quarterish(baseScore)]
@@ -156,29 +169,23 @@ def plusify(number):
         return "%s%s"%("+" if number>=0 else "", number)
     return ""
 
-def resmod(nm, val):
-    def _rawModCalc():
-        if nm in "con per".split():
-            return None
-        if val<5:
-            return -2
-        if val<7:
-            return -1
-        if val>18:
-            return 5
-        return max(0, (val-9)/2)
-    return plusify(_rawModCalc())
-
 def showAbilities(character):
     def _abilShow(nm, val):
-        def _resMod():
-            return resmod(nm, val)
-        def _statVal():
-            return ("%s"%(val)).rjust(2)
-        return inform(nm, "%s: %s ( %s ) %s"%(presentable(nm), 
-                                              _statVal(), 
-                                              halfish(val), 
-                                              _resMod()))
+        def _fixed(value):
+            return ("%s"%(presentable(value))).rjust(2)
+        def _tidyUpAbilityData(values):
+            return map(_fixed, values)
+        def _presentValues():
+            return "%s: %s ( %s ) %s"%_tidyUpAbilityData(abilityCalc(nm, val))
+        return inform(nm, _presentValues())
+        # def _resMod():
+        #     return resmod(nm, val)
+        # def _statVal():
+        #     return ("%s"%(val)).rjust(2)
+        # return inform(nm, "%s: %s ( %s ) %s"%(presentable(nm), 
+        #                                       _statVal(), 
+        #                                       halfish(val), 
+        #                                       _resMod()))
     map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
     return note(("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
 
