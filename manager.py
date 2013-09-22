@@ -155,7 +155,7 @@ def showAbilities(character):
             return "%s: %s"%(presentable(nm), _tidyStat())
         return inform(nm, _presentValues())
     map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
-    return note(("Total ability scores: %s"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
+    return note(("Total ability scores: %s (60 free)"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
 
 def nmDisp(txt, indent):
     return ("%s%s"%("" if indent else "   ", txt)).ljust(27, ".")
