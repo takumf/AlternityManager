@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-21 21:19:57 MDT
+Date: 2013-09-22 00:32:47 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -161,8 +161,10 @@ Stat names are case insensitive.
      Total ability scores: 46
      Interaction................ 2 [9/4/2] 6
      
-If  there  are any  spaces  in  the  stat's  name, replace  them  with
-underscores.
+Any character  data with spaces  in the name  can be referred  to with
+underscores replacing the space.   The command interpreter can usually
+figure out what  you mean if you  put either a space  or an underscore
+but the underscore should be used in case it doesn't work.
 
      > computer_science 1  
      My Example Character: Human, Combat Spec
