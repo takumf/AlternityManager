@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-22 00:35:17 MDT
+Date: 2013-09-22 01:08:44 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -31,168 +31,85 @@ passed into the manager.py script is the name of the character file.
 
  $ python manager.py my_character_data.alternity
 
-To e-mail the character data to your GM, try this:
+To e-mail the character data to your GM, try to "dump" data like so:
 
  $ python manager.py -d my_character_data.alternity | mail -s "My character" gamemaster@webealternityfans.org
 
-To see the  list of available commands, type "/help"  in the character
+Special manager commands are preceded  by forward slashes.  To see the
+list  of  available  commands,  use the  "/help"  command  inside  the
 manager.
 
  $ echo '/help' | python manager.py my_character_data.alternity
 
 2 Managing Character Data 
 ==========================
-To list  all the stats  that are tracked by  this tool, use  the /list
-command:
+When in  the character  manager, you  can get and  set values  for the
+different stats by  typing the name of the stat  followed by the value
+you you want the stat to have.
 
-     > /list
-     ==== Known stats...
-     acrobatics              act                     
-     administration          air_vehicle             
-     animal_handling         animal_riding           
-     animal_training         armor_operation         
-     astrogation_system      astronomy               
-     athletics               awareness               
-     bargian                 biology                 
-     blade                   bludgeon                
-... <snip>...
-     technical_science       throw                   
-     track                   trailblazing            
-     treatment               unarmed_attack          
-     vehicle_operation       vehicle_tactics         
-     water_vehicle           weapons                 
-     wil                     xenology                
-     xenomedicine            zero_gravity_training   
-     zoology                 
-     
-To set values  for character data, type the data  name followed by the
-new  value you  want set  for  it.  Once  you hit  ENTER, the  updated
-character information should be shown.
+The following will set the Strength score to 10.
 
-     My Example Character: Human, Combat Spec
-     Str:  7 ( 3 ) 0
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 42
-     > str 12
-     My Example Character: Human, Combat Spec
-     Str: 12 ( 6 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 47
+   > str 10
+   Changed str from 7 to 10
 
-If you want  to increase or decrease the stat  relative to its current
-value, precede the value with a "+" or "-" like so...
+You  can  also change  the  stat  relative  to  its current  value  by
+preceding numbers with either + or -
 
-     My Example Character: Human, Combat Spec
-     Str: 12 ( 6 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 47
-     > str +1
-     My Example Character: Human, Combat Spec
-     Str: 13 ( 6 ) 2
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 48
-     > str -2
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
+   > str 10
+   Changed str from 7 to 10
+   > str +2
+   Changed str from 10 to 12
 
-Set skill levels the same way:
+Will set the Strength score to 12.
 
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     > interaction 2
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     Interaction................ 2 [9/4/2] 6
-     > interaction +3
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     Interaction................ 5 [12/6/3] 21
-     
-Stat names are case insensitive.
+To purchase Broad Skills, set its value to any non-zero number.
 
-     > iNtErAcTiOn 2
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     Interaction................ 2 [9/4/2] 6
-     
-Any character  data with  spaces in  the name  can be  referenced with
-underscores replacing the space.   The command interpreter can usually
-figure out what  you mean if you  put either a space  or an underscore
-but the underscore should be used in case it doesn't work.
+   > athletics 1098247598745
+   Set athletics to be 1098247598745
+   > athletics 1
+   Set athletics to be 1
 
-     > computer_science 1  
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     Computer Science........... 1 [8/4/2] 7
-     Interaction................ 2 [9/4/2] 6
+The two above lines both set  the athletics skill to "trained" and the
+following will set the athletics skill to "untrained"
 
-Specialty  skills  also  work  and are  cleanly  annotated  under  the
-appropriate Broad skill.
+   > athletics 0
+   Set athletics to be 0
 
-     > programming 1
-     My Example Character: Human, Combat Spec
-     Str: 11 ( 5 ) 1
-     Dex:  7 ( 3 ) 0
-     Con:  7 ( 3 ) 
-     Int:  7 ( 3 ) 0
-     Wil:  7 ( 3 ) 0
-     Per:  7 ( 3 ) 
-     Total ability scores: 46
-     Computer Science........... 1 [8/4/2] 7
-        Programming............. 1 [8/4/2] 4
-     Interaction................ 2 [9/4/2] 6
+Stat names are case insensitive.  The following is valid.
+
+   > iNtErAcTiOn 1
+   Set interaction to be 1
+
+If the stat  name has a space in it,  the command interpreter _SHOULD_
+understand what you mean.
+
+   > computer science 10
+   Set computer_science to be 10
+
+But if it doesn't  put an underscore in the name  and that should work
+out nicely.
+
+   > computer_science 1
+   Set computer_science to be 1                                                                                           
+
+Any stat with a  space in its name can be  referenced by replacing the
+space with an underscore. 
+
+If you don't put a value after the stat name, the stat's current value
+is reported.
+
+   > knowledge
+   knowledge is currently trained
+   > charm
+   charm is currently 0
+
+Specialty skills will have a rank equal to the value you give it.
+
+   > charm 2
+   Set charm to be 2
+
+The above  will set  the Charm specialty  skill under  the Interaction
+broad skill to have 2 ranks.
 
 3 Exiting the Manager 
 ======================
