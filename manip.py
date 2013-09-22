@@ -28,17 +28,22 @@ def abilityManipulation(character, stat, val, args):
     return _report()
 
 def setSkillValue(character, skill, valRaw):
+    def _trainedVal(v):
+        if character[skill].parent:
+            return v
+        return "trained" if v or character[skill].purchased else "untrained"
     val=int(valRaw)
+    oldValue=_trainedVal(character[skill].level)
     character[skill].purchased=True if val else False
     character[skill].level=int(val) if character[skill].parent else 0
-    return (True, "Set %s to be %s"%(skill, val))
+    return (True, "Changed %s from %s to %s"%(skill, 
+                                              oldValue,
+                                              _trainedVal(val)))
 
 def boostSkillValue(character, skill, val):
-    oldValue=character[skill].level
-    setSkillValue(character, skill, character[skill].level+int(val))
-    return (True, "Increased %s from %s to %s"%(skill, 
-                                                oldValue, 
-                                                character[skill].level))
+    return setSkillValue(character, 
+                         skill,
+                         character[skill].level+int(val))
 
 def skillManipulation(character, stat, val, args):
     def _purchased():
