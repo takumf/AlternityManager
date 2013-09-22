@@ -206,7 +206,9 @@ def showSkills(character):
         def _tnAnnotate(ordinary, good, amazing):
             return ("[%s/%s/%s]"%(ordinary, good, amazing)).ljust(9)
         def _tns():
-            return skillTnCalc(character.get(stat)+levelBonus if purchased or level>0 else 0)
+            if parent:
+                return skillTnCalc(character.get(stat)+levelBonus if level>0 else 0)
+            return skillTnCalc(character.get(stat) if purchased else halfish(character.get(stat)))
         levelBonus=level if parent else 0
         showable=[]
         basic="%s %s %s %s"%(nmDisp(presentable(name), not parent),
