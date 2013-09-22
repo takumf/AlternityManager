@@ -151,26 +151,28 @@ def childSkillsOf(character, parent):
 def abilitiesOf(character):
     return genDat(filt(lambda k,v: k in alternityAbilities(), character.items()))
 
-def resmod(nm, val):
-    if nm in "con per".split():
-        return None
-    if val<5:
-        return -2
-    if val<7:
-        return -1
-    if val>18:
-        return 5
-    return max(0, (val-9)/2)
-
 def plusify(number):
     if number is not None:
         return "%s%s"%("+" if number>=0 else "", number)
     return ""
 
+def resmod(nm, val):
+    def _rawModCalc():
+        if nm in "con per".split():
+            return None
+        if val<5:
+            return -2
+        if val<7:
+            return -1
+        if val>18:
+            return 5
+        return max(0, (val-9)/2)
+    return plusify(_rawModCalc())
+
 def showAbilities(character):
     def _abilShow(nm, val):
         def _resMod():
-            return plusify(resmod(nm, val))
+            return resmod(nm, val)
         def _statVal():
             return ("%s"%(val)).rjust(2)
         return inform(nm, "%s: %s ( %s ) %s"%(presentable(nm), 
