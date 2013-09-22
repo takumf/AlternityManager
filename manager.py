@@ -15,7 +15,7 @@ def speciesFreeSkills():
                    'mechalus':"athletics,vehicle_operation,stamina,knowledge,computer_science,awareness".split(","),
                    'sesheyan':"melee_weapons,acrobatics,stamina,knowledge,awareness,interaction".split(","),
                    "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
-                   'weren':"athletics,unarmed attack,stamina,knowledge,awareness,interaction".split(",")})
+                   'weren':"athletics,unarmed_attack,stamina,knowledge,awareness,interaction".split(",")})
 
 def freeSkillsFor(character):
     return speciesFreeSkills().get(sanitize(character.species), [])
