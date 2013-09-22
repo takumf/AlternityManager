@@ -1,4 +1,4 @@
-from alternityGeneral import *
+from alternityGeneral import alternityAbilities
 
 def setAbilityValue(character, stat, val):
     def speciesLimitSatisfied():
