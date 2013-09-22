@@ -46,7 +46,7 @@ def abilityCalc(name, baseScore):
     return (baseScore, halfish(baseScore), resmod(name, baseScore))
 
 def skillTnCalc(baseScore):
-    return [baseScore, halfish(baseScore), quarterish(baseScore)]
+    return (baseScore, halfish(baseScore), quarterish(baseScore))
 
 def initializeAbilities():
     def _gen(abils):
@@ -153,41 +153,36 @@ def skillExpense(character, skillName):
                         skillName in freeSkillsFor(character),
                         **character.get(skillName))
 
-def showSkillExpense(character, skillNameRaw):
-    def _se(skillName):
-        profession=character.get(skillNameRaw).profession
-        professionMatches=startsWithAny(character.profession, 
-                                        profession)
-        professionBenefit=-1 if professionMatches else 0
-        msg("%s: Cost %s.  %s points spent"%(
-            presentable(skillName), 
-            character.get(skillNameRaw).cost+professionBenefit,
-            skillExpense(character, skillName) ))
-        if skillName in freeSkillsFor(character):
-            note("    This is a free skill for your species")
-        if professionMatches:
-            note("    This skill falls under your profession")
-        return note("")
-    return _se(sanitize(skillNameRaw))
-
 def skillPointsSpent(character):
     def _calcy(sk):
         return skillExpense(character, sk)
     return sum(map(_calcy, skillsOf(character)))
-                                         
+
+def skillTargetNumbers(character, skill):
+    def _calc(base, bonus, purchased):
+        if bonus or purchased:
+            return skillTnCalc(base+bonus)
+        return skillTnCalc(halfish(base))
+    def _prepThenCalc(level, stat, parent, purchased=False, **junk):
+        return _calc(character.get(stat, 0),
+                     level if parent else 0,
+                     purchased)
+    return _prepThenCalc(**character.get(skill))
+
 def showSkills(character):
     def _composeSkillTxt(name, untrained, parent, stat, cost, level, profession, purchased=False, **remaining):
+        def _lvlAnnotate():
+            return str(level).rjust(2) if parent else "  "
+        def _tnAnnotate(ordinary, good, amazing):
+            return ("[%s/%s/%s]"%(ordinary, good, amazing)).ljust(9)
+        def _tns():
+            return skillTnCalc(character.get(stat)+levelBonus if purchased or level>0 else 0)
         levelBonus=level if parent else 0
-        ordinary=character.get(stat)+levelBonus if purchased or level>0 else 0
-        good=halfish(ordinary)
-        amazing=halfish(good)
         showable=[]
-        basic="%s %s [%s/%s/%s] %s"%(nmDisp(presentable(name), not parent),
-                                     level if parent else ".",
-                                     ordinary,
-                                     good, 
-                                     amazing,
-                                     skillExpense(character, name))
+        basic="%s %s %s %s"%(nmDisp(presentable(name), not parent),
+                             _lvlAnnotate(),
+                             _tnAnnotate(*_tns()),
+                             skillExpense(character, name))
         for x in childSkillsOf(character, name):
             showable.extend(_composeSkillTxt(**character.get(x)))
         if level>0 or purchased or showable:
@@ -213,8 +208,8 @@ def showCharacter(character):
     showSkills(character)
     return character
 
-def consumeInput():
-    return raw_input("> ").strip().lower().split()
+def consumeInput(prompt="manage"):
+    return raw_input("%s> "%(prompt)).strip().lower().split()
 
 def validatePrompt(promptTxt, validatorFunc):
     def _getInput():

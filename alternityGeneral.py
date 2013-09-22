@@ -52,3 +52,14 @@ def genClassDef(data):
                            data, 
                            _classDefLine()),
                     data)
+
+def numericTxt(data):
+    def _dat():
+        return "%s"%(data)
+    def _chk(t):
+        return t.isdigit()
+    def _signsOk(d):
+        if d.startswith("-") or d.startswith("+"):
+            return d[1:]
+        return d
+    return _chk(_signsOk(_dat()))
