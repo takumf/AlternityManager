@@ -169,13 +169,16 @@ def startsWithAny(subject, startChars):
 def skillExpense(character, skillName):
     def _costPerBoost(cost, level):
         return (cost)+level
-    def _totalCost(cc, il, level):
-        return sum(map(cc, range(il, level)))
+    def _totalCost(cc, level):
+        return sum(map(cc, range(0, level)))
     def _professionMatches(skillProf, chProf):
         return skillProf[0].lower() == chProf[0].lower()
-    def _calcExpense(chProf, gainedFree, cost, profession, level, **rest):
+    def _calcExpense(chProf, gainedFree, cost, profession, level, parent, purchased, **rest):
+        if gainedFree or not purchased:
+            return 0
+        if parent is None:
+            return cost-1 if _professionMatches(profession, chProf) else cost
         return _totalCost(partial(_costPerBoost, cost-1 if _professionMatches(profession,chProf) else cost),
-                          1 if gainedFree else 0,
                           level)
     return _calcExpense(character.profession,
                         skillName in freeSkillsFor(character),
