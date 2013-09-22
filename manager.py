@@ -331,7 +331,9 @@ def horriblyUglyBloatyCruftyManageChar(character):
         return _processCommand({"list": _lst,
                                 "quit": _quit,
                                 "skill": _skexp})
-    def processInp(stat, *args):
+    def processInp(stat=None, *args):
+        if stat is None:
+            return msg("")
         if stat.startswith("/"):
             return _specialCommand(stat, args)
         if stat in character:
