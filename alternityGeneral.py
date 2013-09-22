@@ -34,3 +34,21 @@ def _classDefLine():
     def _setter(self, k, v):
         self[k]=v
         return v\n'''
+
+def _propGenLine(varnm):
+    return '''    %s=property(lambda s: s.get("%s"), lambda s,v: s._setter("%s", v))\n'''%(varnm, varnm, varnm)
+
+def _instTmp(deftxt, data):
+    try:
+        exec deftxt
+    except:
+        return inform({}, "Fail\n\n%s\n\n"%(deftxt))
+    return _TmpStat(data)
+
+def genClassDef(data):
+    if not hasattr(data, "update"):
+        raise Exception("You gave me a poop data: %s"%(data))
+    return _instTmp(reduce(lambda c,v: c+_propGenLine(v), 
+                           data, 
+                           _classDefLine()),
+                    data)
