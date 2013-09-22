@@ -290,6 +290,9 @@ def createNewCharacter():
                                    speciesPrompt(),
                                    professionPrompt())
 
+def changler(source, key, val):
+    return genDat(source.items()+[(key, val)])
+
 def horriblyUglyBloatyCruftyManageChar(character):
     def boostSkill(stat, amount):
         character[stat].level+=amount
