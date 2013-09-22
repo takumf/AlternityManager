@@ -20,6 +20,37 @@ def speciesFreeSkills():
 def freeSkillsFor(character):
     return speciesFreeSkills().get(sanitize(character.species), [])
 
+def freeSkillPointsFor(character):
+    return { 4:15,
+             5:20,
+             6:25,
+             7:30,
+             8:35,
+             9:40,
+             10:45,
+             11:50,
+             12:55,
+             13:60,
+             14:65,
+             15:70,
+             16:75,
+        }[character.int]
+def broadSkillsAtCharacterCreationFor(character):
+    return { 4:2,
+             5:2,
+             6:3,
+             7:3,
+             8:4,
+             9:4,
+             10:5,
+             11:5,
+             12:6,
+             13:6,
+             14:7,
+             15:7,
+             16:8,
+        }[character.int]
+
 def halfish(value):
     return (value-(value%2))/2
 
@@ -90,6 +121,10 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return [("name", nm), ("species", sp), ("profession", pr)]
     return genDat(_numerics()+_vitals())
 
+def purchasedGenSkillsOf(character):
+    freeSkills = freeSkillsFor(character)
+    return genDat(filt(lambda k,v: v.get("parent")==None and v.get("purchased") and v.get('name') not in freeSkills, skillsOf(character).items()))
+    
 def genSkillsOf(character, stat):
     global knownGeneralSkills
     if stat not in knownGeneralSkills:
@@ -191,7 +226,10 @@ def showSkills(character):
     map(_skilGroupShow, 
         map(_skillsUnderStat, 
             alternityAbilities()))
-    return inform(character, ("Total Skill Points Spent: %s"%(skillPointsSpent(character))).rjust(40))
+    return inform(character, 
+                  ("Skill Points Spent:".rjust(30) + " %s (%s free)\n"%(skillPointsSpent(character), freeSkillPointsFor(character))),
+                  ("Broad Skills purchased:".rjust(29) + " %s (%s at creation)"%(len(purchasedGenSkillsOf(character)), broadSkillsAtCharacterCreationFor(character))))
+
 
 def showCharacter(character):
     msg("%s: %s, %s"%(character.name, character.species, character.profession))
