@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-22 01:08:44 MDT
+Date: 2013-09-22 15:01:45 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -12,9 +12,10 @@ Table of Contents
 =================
 1 Quick Start
 2 Managing Character Data
-3 Exiting the Manager
-4 To-do list
-5 Legal Mumbo Jumbo
+3 Adding Skills to the List
+4 Exiting the Manager
+5 To-do list
+6 Legal Mumbo Jumbo
 
 
 1 Quick Start 
@@ -111,12 +112,22 @@ Specialty skills will have a rank equal to the value you give it.
 The above  will set  the Charm specialty  skill under  the Interaction
 broad skill to have 2 ranks.
 
-3 Exiting the Manager 
+3 Adding Skills to the List 
+============================
+If you want to add a skill to  the list, we have a CSV-like data sheet
+inculded.  Skill  groups are sparated by  double-new-lines.  The first
+skill in the group is read as the Broad skill.  Every other is read as
+the Specialty skill.  Once you've edited the CSV to your satisfaction,
+you need to generate the new skills tree data by doing this:
+
+   $ python convertSkills.py < skills.csv > skills.py
+
+4 Exiting the Manager 
 ======================
 You quit by either typing the  "/quit" command or sending EOF.  That's
 CTRL+Z in Windows systems and CTRL+D on computers for grown-ups.
 
-4 To-do list 
+5 To-do list 
 =============
 There is a to-do and bug list kept in Trello for LOL's.
 
@@ -125,7 +136,7 @@ There is a to-do and bug list kept in Trello for LOL's.
 Which I'm marginally (not ordinarily or amazingly) more likely to keep
 up-to-date than this README file.
 
-5 Legal Mumbo Jumbo 
+6 Legal Mumbo Jumbo 
 ====================
 The Alternity  RPG belongs to  whoever it is  that ended up  buying it
 (not me).   I'm pretty  sure any  owner of the  game is  reserving all
