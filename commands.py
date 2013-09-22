@@ -1,4 +1,5 @@
 from sys import modules
+from alternityGeneral import genDat, skillsOf, numericTxt
 
 def quit(*args, **more):
     '''Save data and exit the character manager.'''
@@ -35,3 +36,22 @@ def list(character, *args, **more):
             return " ".join(map(_spaceTxt, stats[interval:interval+2]))
         return "\n".join(map(_composeLst, range(0,len(stats), 2)))
     return (True, "Known stats...\n%s"%(_listStats(sorted(character.keys()))))
+
+def newskill(character, stat=None, name=None, cost=4, parent=None, profession="-", untrained=True, *junk):
+    '''Add a new skill to the character data.  Example: /newskill mandarin_language 3 knowledge'''
+    if name in character:
+        return (True, "%s already appears to exist in character data"%(name))
+    if not stat or not name:
+        return (True, "Must give the stat the skill falls under and its name.  Should also provide a cost and parent skill name (if applicable)")
+    character[name]=genDat({'parent':parent or None, 
+                            'stat':stat,
+                            'name':name,
+                            'cost':int(cost) if numericTxt(cost) else 4,
+                            'parent':parent or None,
+                            'profession':profession,
+                            'purchased':False,
+                            'untrained':eval(untrained) if hasattr(untrained, "split") else bool(untrained),
+                            'level':0})
+    skillsOf(character, True)
+    return (True, "Added skill data to character: %s"%(character[name]))
+    

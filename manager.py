@@ -6,11 +6,8 @@ from alternityGeneral import *
 import commands
 import manip
 
-knownCharacterSkills=None
+#knownCharacterSkills=None
 knownGeneralSkills={}
-
-def genDat(data):
-    return genClassDef(dict(data))
 
 def speciesFreeSkills():
     return genDat({'human':"athletics,vehicle_operation,stamina,knowledge,awareness,interaction".split(","),
@@ -92,12 +89,6 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
     def _vitals():
         return [("name", nm), ("species", sp), ("profession", pr)]
     return genDat(_numerics()+_vitals())
-
-def skillsOf(character):
-    global knownCharacterSkills
-    if knownCharacterSkills is None:
-        knownCharacterSkills=genDat(filt(lambda k,v: hasattr(v, "update"), character.items()))
-    return knownCharacterSkills
 
 def genSkillsOf(character, stat):
     global knownGeneralSkills
@@ -238,7 +229,7 @@ def managerSpecialCommand(character, command, args):
         if cmd in dir(commands):
             return getattr(commands, cmd)(character, *args)
         print "Unknown command: %s"%(command)
-        return True
+        return (True, "")
     return _cmd(command.strip("/"))
 
 def managerStatManipulation(character, stat, args):

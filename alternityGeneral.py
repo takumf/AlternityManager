@@ -1,3 +1,5 @@
+knownCharacterSkills=None
+
 def alternityAbilities():
     return "str dex con int wil per".split()
 
@@ -53,6 +55,9 @@ def genClassDef(data):
                            _classDefLine()),
                     data)
 
+def genDat(data):
+    return genClassDef(dict(data))
+
 def numericTxt(data):
     def _dat():
         return "%s"%(data)
@@ -63,3 +68,12 @@ def numericTxt(data):
             return d[1:]
         return d
     return _chk(_signsOk(_dat()))
+
+def reconstituteSkills(character):
+    return genDat(filt(lambda k,v: hasattr(v, "update"), character.items()))
+
+def skillsOf(character, reconstitute=False):
+    global knownCharacterSkills
+    if knownCharacterSkills is None or reconstitute:
+        knownCharacterSkills=reconstituteSkills(character)
+    return knownCharacterSkills

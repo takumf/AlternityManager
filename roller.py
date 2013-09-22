@@ -1,8 +1,8 @@
 import re
 from random import randint
 from sys import argv, exit
-from alternityGeneral import alternityAbilities, numericTxt
-from manager import first, genDat, consumeInput
+from alternityGeneral import alternityAbilities, numericTxt, genDat
+from manager import first, consumeInput
 import manager
 
 def totallyTimeToQuit():
