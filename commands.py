@@ -10,6 +10,8 @@ def howdy(character, *args, **more):
 
 def help(*args, **more):
     '''This help message.'''
+    def _cmdTxt(txt):
+        return ("/%s"%(txt)).rjust(10)
     def _doHelp(module):
         def _funcs():
             def _predicate(thing):
@@ -19,7 +21,7 @@ def help(*args, **more):
             return filter(_predicate, dir(module))
         msg=""
         for x in _funcs():
-            msg+= "%s: %s\n"%(x.rjust(10), 
+            msg+= "%s: %s\n"%(_cmdTxt(x),
                             getattr(module, x).__doc__)
         return (True, "Known commands...\n%s\n"%(msg))
     return _doHelp(modules[__name__])
