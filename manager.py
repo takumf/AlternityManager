@@ -20,20 +20,8 @@ def freeSkillsFor(character):
     return speciesFreeSkills().get(sanitize(character.species), [])
 
 def freeSkillPointsFor(character):
-    return { 4:15,
-             5:20,
-             6:25,
-             7:30,
-             8:35,
-             9:40,
-             10:45,
-             11:50,
-             12:55,
-             13:60,
-             14:65,
-             15:70,
-             16:75,
-        }[character.int]
+    return (character.int-1)*5
+
 def broadSkillsAtCharacterCreationFor(character):
     return { 4:2,
              5:2,
