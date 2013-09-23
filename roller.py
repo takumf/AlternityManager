@@ -48,18 +48,16 @@ def rollReport(tn, results):
                 return "Critical failure."
             return "Failure."
         def _txt(*intersperses):
-            return "%s %s (%s) vs [%s/%s/%s]\n"%intersperses
-        return _txt(_narrate(*tn), value, arithmetic, *tn)
+            return "%s -> %s %s (%s) vs [%s/%s/%s]\n"%intersperses
+        return _txt(rollNotation, _narrate(*tn), value, arithmetic, *tn)
     return _finalize(*results)
 
 def rollVersusStat(character, stat, situation=0, *stipulations):
     def _abilityCheck():
-        return 0
+        return rollReport(manager.skillTnCalc(character.get(stat)), rollPenalty(int(situation)))
     def _otherRoll():
         return 0
     def _skillCheck():
-        if not numericTxt(situation):
-            return "Bad situation modifier: %s"%(situation)
         return rollReport(manager.skillTargetNumbers(character, 
                                                      stat),
                           rollPenalty(int(situation)))
@@ -69,6 +67,8 @@ def rollVersusStat(character, stat, situation=0, *stipulations):
         return _abilityCheck()
     if callable(character[stat]):
         return character[stat](_otherRoll())
+    if not numericTxt(situation):
+        return "Bad situation modifier: %s"%(situation)
     return _skillCheck()
 
 def annotatedRoll(value, arithmetic, diceNotation):
