@@ -236,6 +236,9 @@ def namePrompt():
     return validatePrompt("Name", lambda x: True)
 
 def speciesPrompt():
+    def _cleanupNm(species):
+        return species.replace("_", "'").capitalize()
+    note("Choose species:", ", ".join(map(_cleanupNm, speciesFreeSkills().keys())))
     return validatePrompt("Species", lambda x: True)
 
 def professionPrompt():
