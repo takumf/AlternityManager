@@ -23,7 +23,11 @@ def quarterish(value):
     return halfish(halfish(value))
 
 def freeSkillsFor(character):
-    return speciesFreeSkills().get(sanitize(character.species), [])
+    def _idSpeciesSkills(knownSkills, specieskw):
+        return knownSkills.get(specieskw) or knownSkills.get("human")
+    return _idSpeciesSkills(speciesFreeSkills(), 
+                            sanitize(character.species if hasattr(
+                                character, "get") else character))
 
 def freeSkillPointsFor(character):
     return (character.int-1)*5
@@ -81,7 +85,7 @@ def initializeSkills():
 def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
     def _applySpeciesFreebies(pair):
         def _speciesFreebies(skillName, skillContent, *extraneousPoop):
-            if skillName in speciesFreeSkills().get(sp.lower(), []):
+            if skillName in freeSkillsFor(sp):
                 skillContent.purchased=True
             return (skillName, skillContent)
         return _speciesFreebies(*pair)
