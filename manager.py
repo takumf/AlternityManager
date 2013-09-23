@@ -130,7 +130,6 @@ def genSkillsOf(character, stat):
         knownGeneralSkills[stat]=genDat(filt(lambda k,v: v.get("parent")==None and v.get('stat')==stat, skillsOf(character).items()))
     return knownGeneralSkills.get(stat)
 
-
 def childSkillsOf(character, parent):
     return genDat(filt(lambda k,v: v.get("parent")==parent, skillsOf(character).items()))
 
@@ -171,7 +170,7 @@ def skillExpense(character, skillName):
     def _totalCost(cc, level):
         return sum(map(cc, range(0, level)))
     def _professionMatches(skillProf, chProf):
-        return skillProf[0].lower() == chProf[0].lower()
+        return startsWithAny(chProf, skillProf)
     def _calcExpense(chProf, gainedFree, cost, profession, level, parent, purchased, **rest):
         if gainedFree or not purchased:
             return 0
