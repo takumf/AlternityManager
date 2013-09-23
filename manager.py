@@ -16,6 +16,12 @@ def speciesFreeSkills():
                    "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
                    'weren':"athletics,unarmed_attack,stamina,knowledge,awareness,interaction".split(",")})
 
+def halfish(value):
+    return (value-(value%2))/2
+
+def quarterish(value):
+    return halfish(halfish(value))
+
 def freeSkillsFor(character):
     return speciesFreeSkills().get(sanitize(character.species), [])
 
@@ -24,12 +30,6 @@ def freeSkillPointsFor(character):
 
 def broadSkillsAtCharacterCreationFor(character):
     return halfish(character.int)
-
-def halfish(value):
-    return (value-(value%2))/2
-
-def quarterish(value):
-    return halfish(halfish(value))
 
 def resmod(nm, val):
     def _rawModCalc():
