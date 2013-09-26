@@ -125,7 +125,7 @@ def showAbilities(character):
         def _bns():
             return sum(starmap(lambda x,y: y, filt(lambda s,v: s=="%s_resmod"%(nm), character.bonuses)))
         def _depictIt(base, untrained, res):
-            return map(_cleanit, [base, untrained, "" if not res else plusify(res+_bns())])
+            return map(_cleanit, [base, untrained, "" if res is None else plusify(res+_bns())])
         def _cleanit(component):
             return ("%s"%(presentable(str(component)))).rjust(2)
         def _statLine(base, untr, res):

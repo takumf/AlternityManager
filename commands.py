@@ -1,5 +1,5 @@
 from sys import modules
-from alternityGeneral import genDat, skillsOf, numericTxt
+from alternityGeneral import genDat, skillsOf, numericTxt, first, filt
 
 def quit(*args, **more):
     '''Save data and exit the character manager.'''
@@ -55,3 +55,23 @@ def newskill(character, stat=None, name=None, cost=4, parent=None, profession="-
     skillsOf(character, True)
     return (True, "Added skill data to character: %s"%(character[name]))
     
+def bonus(character, bonusName=None, val=None, *args):
+    '''Manage weird bonuses the character gets such as those that come with species or professions.'''
+    def _addBonus(num):
+        character.bonuses.append((bonusName, num))
+        return "Added %s to %s's %s."%(val, character.name, bonusName)
+    def _deleteBonus():
+        character.bonuses=filter(lambda x: x[0]!=bonusName and x[1]!=val, character.bonuses)
+        return "Removed %s from %s's character data."%(bonusName, character.name)
+    def _doAppropriateThing():
+        if bonusName is None:
+            return '''Manage character bonuses.  To add:
+    /bonus bonus_name numeric_value +
+To remove:
+    /bonus bonus_name numeric_value -'''
+        if numericTxt(val) and not args or args[0]!="-":
+            return _addBonus(int(val))
+        if val and args and args[0]=="-":
+            return _deleteBonus()
+        return "Bonus: %s now has value of %s"%(bonusName, val)
+    return (True, _doAppropriateThing())

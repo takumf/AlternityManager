@@ -1,4 +1,5 @@
 from alternityGeneral import alternityAbilities, alternityPerks, sanitize
+from itertools import starmap
 
 def setAbilityValue(character, stat, val):
     def speciesLimitSatisfied():
@@ -92,9 +93,18 @@ def perkManagement(character, rawPerk, *args):
     return (True, "%s\nPerks/Flaws: %s"%(_identifyPerk(alternityPerks()),
                                          ", ".join(character.perks)))
 
+def bonusManagement(character, *args):
+    def _showBonuses():
+        def _sho(k,v):
+            return "%s=%s"%(k,v)
+        return ", ".join(starmap(_sho, character.bonuses))
+    return (True, "Bonuses: %s\nUse the /bonus command to add and remove bonuses."%(_showBonuses()))
+
 def genericManipulations(character, stat, val=None, *args):
     if stat.startswith("perk") or stat.startswith("flaw"):
         return perkManagement(character, val, *args)
+    if stat.startswith("bonus"):
+        return bonusManagement(character, val, *args)
     if stat not in character:
         return tryAlternatives(character, stat, stat, val, *args)
     if stat in alternityAbilities():
