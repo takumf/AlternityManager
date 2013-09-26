@@ -97,7 +97,7 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return _abil()+_skil()
     def _vitals():
         return [("name", nm), ("species", sp), ("profession", pr)]
-    return genDat(_numerics()+_vitals())
+    return genDat(_numerics()+_vitals()+[("perks", [])])
 
 def purchasedGenSkillsOf(character):
     freeSkills = freeSkillsFor(character)
@@ -145,10 +145,10 @@ def startsWithAny(subject, startChars):
 
 def baseActionCheck(character):
     def _profBonus():
-        return {"Combat Spec":3,
-                "Diplomat":1,
-                "Free Agent":2,
-                "Tech Op":1}.get(character.profession, 0)
+        return {sanitize("Combat Spec"):3,
+                sanitize("Diplomat"):1,
+                sanitize("Free Agent"):2,
+                sanitize("Tech Op"):1}.get(sanitize(character.profession), 0)
     return halfish(character.int+character.dex)+_profBonus()
 
 def actionCheckScore(character):
@@ -157,9 +157,15 @@ def actionCheckScore(character):
     return map(str, _scores(baseActionCheck(character)))
 
 def actionsPerRound(character):
-    def _calcAPR(conwill):
-        return max(1,(conwill-8)/8)
-    return min(4, _calcAPR(character.con+character.wil))
+    def _calc(cw):
+        if cw<16:
+            return 1
+        if cw<24:
+            return 2
+        if cw<32:
+            return 3
+        return 4
+    return _calc(character.con+character.wil)
 
 def lastResortMaxAndCost(character):
     def _calc(rates):
@@ -265,15 +271,29 @@ def showSkills(character):
                   ("Skill Points Spent:".rjust(30) + " %s (%s free)\n"%(skillPointsSpent(character), freeSkillPointsFor(character))),
                   ("Broad Skills purchased:".rjust(29) + " %s (%s at creation)"%(len(purchasedGenSkillsOf(character)), broadSkillsAtCharacterCreationFor(character))))
 
+def showPerks(character):
+    def _labelPerkData(name=None, cost=None, **perkJunk):
+        if name is None or cost is None:
+            return "ERROR: %s"%(perkJunk)
+        return "%s (%s)"%(presentable(name), 
+                          nth(cost, character.perks.count(name)-1) or first(*cost))
+    def _calculatePerkCosts(perkChart):
+        def _lblPerk(perk):
+            return _labelPerkData(**perkChart.get(perk, {}))
+        return ", ".join(map(_lblPerk, set(character.perks)))
+    return _calculatePerkCosts(alternityPerks())
+
 def showExtraInfo(character):
     def mrTxt(k,v):
         return "%s: %s"%(presentable(k).rjust(9),str(v).ljust(3))
-    print "Action Check: %s"%("/".join(actionCheckScore(character)))
+    print "Action Check: %s Actions/Round: %s"%(("/".join(actionCheckScore(character))).ljust(15),
+                              actionsPerRound(character))
     nl=""
     for x in starmap(mrTxt, movementRates(character).items()):
         print "%s%s"%(x, nl),
         nl = "\n" if not nl else ""
     print ""
+    print "Perks/Flaws: %s"%(showPerks(character))
 
 def showCharacter(character):
     msg("%s: %s, %s"%(character.name, character.species, character.profession))

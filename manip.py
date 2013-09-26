@@ -1,4 +1,4 @@
-from alternityGeneral import alternityAbilities
+from alternityGeneral import alternityAbilities, alternityPerks, sanitize
 
 def setAbilityValue(character, stat, val):
     def speciesLimitSatisfied():
@@ -72,7 +72,29 @@ def tryAlternatives(character, original, stat, val=None, *args):
                                *args)
     return (True, '''"%s" is an unknown stat.'''%(original))
 
+def perkManagement(character, rawPerk, *args):
+    def _manipPerks(perkChart, perk, val, *arguments):
+        if val=="-" and perk in character.perks:
+            character.perks.remove(perk)
+            return '''Removed "%s" from perks.'''%(perk)
+        if val=="+" and perk in perkChart.keys():
+            character.perks.append(perk)
+            return '''Adding "%s" to perk list'''%(perk)
+        return '''Use "-" to remove and "+" to add a perk.\n\tExample: %s +\nTo add %s to perk list.'''%(perk, perk)
+    def _identifyPerk(perkChart):
+        def _getPerkNameAndArgs(pn, arg1=None, *arggies):
+            if pn in perkChart.keys():
+                return _manipPerks(perkChart, pn, arg1, *arggies)
+            if arg1:
+                return _getPerkNameAndArgs("%s_%s"%(pn, arg1), *arggies)
+            return "Don't recognize perk: %s"%(rawPerk)
+        return _getPerkNameAndArgs(sanitize(rawPerk), *args)
+    return (True, "%s\nPerks/Flaws: %s"%(_identifyPerk(alternityPerks()),
+                                         ", ".join(character.perks)))
+
 def genericManipulations(character, stat, val=None, *args):
+    if stat.startswith("perk") or stat.startswith("flaw"):
+        return perkManagement(character, val, *args)
     if stat not in character:
         return tryAlternatives(character, stat, stat, val, *args)
     if stat in alternityAbilities():

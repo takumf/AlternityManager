@@ -10,6 +10,9 @@ class GenericStats(dict):
 def first(initial=None, *remaining):
     return initial
 
+def nth(lst, n):
+    return first(*lst[n:])
+
 def filt(proc, seq):
     return filter(lambda x: proc(*x), seq)
 
@@ -77,3 +80,55 @@ def skillsOf(character, reconstitute=False):
     if knownCharacterSkills is None or reconstitute:
         knownCharacterSkills=reconstituteSkills(character)
     return knownCharacterSkills
+
+def alternityPerks():
+    def _newPerk(name, ability, kind, *costs):
+        return (sanitize(name), genDat({"name":sanitize(name),
+                                        "ability":sanitize(ability),
+                                        "type":kind,
+                                        "cost":costs}))
+    def _perks():
+        return dict([
+            _newPerk("Alien Artifact", "-", "Special", -5, 8),
+            _newPerk("Ambidextrous", "dex", "Active", 4),
+            _newPerk("Animal Friend", "wil", "Conscious", 4),
+            _newPerk("Celebrity", "per", "Conscious", 3),
+            _newPerk("Concentration", "int", "Conscious", 3),
+            _newPerk("Danger Sense", "wil", "Active", 4),
+            _newPerk("Faith", "wil", "Conscious", 5),
+            _newPerk("Filthy Rich", "per", "Conscious", 6),
+            _newPerk("Fists of Iron", "str", "Active", 2, 5),
+            _newPerk("Fortitude", "con", "Active", 4),
+            _newPerk("Good Luck", "wil", "Conscious", 3),
+            _newPerk("Great Looks", "per", "Active", 3),
+            _newPerk("Hightened Ability", "-", "Active", 10),
+            _newPerk("Observant", "wil", "Active", 3),
+            _newPerk("Photo Memory", "per", "Conscious", 3),
+            _newPerk("Powerful Ally", "per", "Conscious", 4),
+            _newPerk("Psionic Awareness", "int", "Conscious", 4),
+            _newPerk("Reflexes", "dex", "Active", 4),
+            _newPerk("Reputation", "wil", "Active", 3),
+            _newPerk("Tough as Nails", "str", "Active", 4),
+            _newPerk("Vigor", "con", "Active", 2,3,4),
+            _newPerk("Willpower", "wil", "Active", 4),
+            _newPerk("Bad Luck", "wil", "-", -6),
+            _newPerk("Clueless", "int", "-", -2,-4,-6),
+            _newPerk("Clumsy", "dex", "-", -5),
+            _newPerk("Code of Honor", "wil", "-", -3),
+            _newPerk("Delicate", "str", "-", -3),
+            _newPerk("Dirt Poor", "per", "-", -5),
+            _newPerk("Forgetful", "int", "-", -5),
+            _newPerk("Fragile", "con", "-", -3),
+            _newPerk("Infamy", "per", "-", -2, -4, -6),
+            _newPerk("Oblivious", "wil", "-", -4),
+            _newPerk("Obsessed", "int", "-", -2, -4, -6),
+            _newPerk("Old Injury", "str", "-", -2, -4, -6),
+            _newPerk("Phobia", "wil", "-", -2, -4, -6),
+            _newPerk("Poor Looks", "per", "-", -3),
+            _newPerk("Powerful Enemy", "per", "-", -2, -4, -6),
+            _newPerk("Primitive", "int", "-", -2, -4, -6),
+            _newPerk("Slow", "dex", "-", -6),
+            _newPerk("Spineless", "wil", "-", -2, -4, -6),
+            _newPerk("Temper", "wil", "-", -2, -4, -6),
+        ])
+    return genDat(_perks())
