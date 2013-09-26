@@ -87,7 +87,7 @@ def perkManagement(character, rawPerk, *args):
                 return _manipPerks(perkChart, pn, arg1, *arggies)
             if arg1:
                 return _getPerkNameAndArgs("%s_%s"%(pn, arg1), *arggies)
-            return "Don't recognize perk: %s"%(rawPerk)
+            return "Don't recognize perk or flaw: %s\nKnown perks/flaws: %s"%(rawPerk, ", ".join(perkChart.keys()))
         return _getPerkNameAndArgs(sanitize(rawPerk), *args)
     return (True, "%s\nPerks/Flaws: %s"%(_identifyPerk(alternityPerks()),
                                          ", ".join(character.perks)))

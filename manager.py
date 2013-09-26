@@ -221,7 +221,7 @@ def skillExpense(character, skillName):
 def skillPointsSpent(character):
     def _calcy(sk):
         return skillExpense(character, sk)
-    return sum(map(_calcy, skillsOf(character)))
+    return sum(map(_calcy, skillsOf(character)))+totalPerkExpenses(character)
 
 def skillTargetNumbers(character, skill):
     def _calc(base, bonus, purchased):
@@ -271,17 +271,28 @@ def showSkills(character):
                   ("Skill Points Spent:".rjust(30) + " %s (%s free)\n"%(skillPointsSpent(character), freeSkillPointsFor(character))),
                   ("Broad Skills purchased:".rjust(29) + " %s (%s at creation)"%(len(purchasedGenSkillsOf(character)), broadSkillsAtCharacterCreationFor(character))))
 
+def determinePerkCost(character, perkName):
+    def _calcCost(perkChart):
+        def _calc(name=None, cost=[100], **junk):
+            if name:
+                return nth(cost, character.perks.count(name)-1) or first(*cost)
+            return 100
+        return _calc(**perkChart.get(sanitize(perkName)))
+    return _calcCost(alternityPerks())
+
+def totalPerkExpenses(character):
+    return sum(map(partial(determinePerkCost, character),
+                   set(character.perks)))
+
 def showPerks(character):
     def _labelPerkData(name=None, cost=None, **perkJunk):
-        if name is None or cost is None:
-            return "ERROR: %s"%(perkJunk)
         return "%s (%s)"%(presentable(name), 
-                          nth(cost, character.perks.count(name)-1) or first(*cost))
-    def _calculatePerkCosts(perkChart):
+                          determinePerkCost(character, name))
+    def _perkNamWithCosts(perkChart):
         def _lblPerk(perk):
             return _labelPerkData(**perkChart.get(perk, {}))
         return ", ".join(map(_lblPerk, set(character.perks)))
-    return _calculatePerkCosts(alternityPerks())
+    return _perkNamWithCosts(alternityPerks())
 
 def showExtraInfo(character):
     def mrTxt(k,v):
