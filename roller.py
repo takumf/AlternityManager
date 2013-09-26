@@ -1,7 +1,8 @@
 import re
+from os import path
 from random import randint
 from sys import argv, exit
-from alternityGeneral import alternityAbilities, numericTxt, genDat
+from alternityGeneral import alternityAbilities, numericTxt, genDat, first, nth
 from manager import first, consumeInput
 import manager
 
@@ -74,10 +75,10 @@ def rollVersusStat(character, stat, situation=0, *stipulations):
 def annotatedRoll(value, arithmetic, diceNotation):
     return "Rolling: %s -> %s = %s"%(diceNotation, arithmetic, value)
 
-def promptForRoll(character):
+def promptForRoll(character, promptyFunc=consumeInput):
     def _input():
         try:
-            return consumeInput("roll")
+            return promptyFunc("roll")
         except EOFError:
             return ["/quit"]
     def _doRoll(wantedRoll, *args):
@@ -91,6 +92,9 @@ def promptForRoll(character):
             return "Don't know how to roll \"%s\""%(wantedRoll)
     return _doRoll(*_input())
     
+def silentPrompt(*junk):
+    return promptForRoll({}, lambda *j: raw_input().strip().lower().split())
+
 def characterRollerLoop(character, rollResults=None):
     if not character:
         print "Bad character data"
@@ -102,21 +106,28 @@ def characterRollerLoop(character, rollResults=None):
         rollResults=promptForRoll(character)
     return 0
 
-def rollerLoop(rollResults=None):
+def rollerLoop(prompter=promptForRoll, rollResults=None):
     while rollResults != totallyTimeToQuit:
         if rollResults:
-            print "\n\t%s\n"%(rollResults)
-        rollResults=promptForRoll({})
+            if prompter==silentPrompt:
+                print nth(rollResults.split("="), 1).strip()
+            else:
+                print "\n\t%s\n"%(rollResults)
+        rollResults=prompter({})
 
 def main(proggy, *args):
     def _loadAndUse(f):
         return characterRollerLoop(first(eval(f.read()), 
                                 f.close()))
     def _charf():
-        return args[-1] if args else None
+        return first(*filter(path.exists, args))
     def _load(f):
-        return _loadAndUse(open(f,"rt")) if f else -1
-    return _load(_charf()) if len(args) > 0 else rollerLoop()
+        if f:
+            return _loadAndUse(open(f,"rt"))
+        if "-t" not in args:
+            print "Couldn't find any character data."
+        return rollerLoop(silentPrompt if "-t" in args else promptForRoll)        
+    return _load(_charf()) 
 
 if __name__=="__main__":
     try:
