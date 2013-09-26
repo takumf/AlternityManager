@@ -2,7 +2,7 @@
                       =========================
 
 Author: Anthony "Ishpeck" Tedjamulia
-Date: 2013-09-24 17:02:05 MDT
+Date: 2013-09-26 11:24:59 MDT
 
 
 A  stupid tool  I  vomited  out in  Python  to  help manage  Alternity
@@ -13,9 +13,10 @@ Table of Contents
 1 Quick Start
 2 Managing Character Data
 3 Adding Skills to the List
-4 Exiting the Manager
-5 To-do list
-6 Legal Mumbo Jumbo
+4 Perks and Flaws
+5 Exiting the Manager
+6 To-do list
+7 Legal Mumbo Jumbo
 
 
 1 Quick Start 
@@ -122,12 +123,25 @@ you need to generate the new skills tree data by doing this:
 
    $ python convertSkills.py < skills.csv > skills.py
 
-4 Exiting the Manager 
+4 Perks and Flaws 
+==================
+You can add perks by doing this:
+
+   > perk perkname +
+
+If  the skill  has multpile  levels, add  the perk  multiple times  to
+increase its level.
+
+If a flaw and perk have the same name, the first time you take it will
+give you the flaw  version and the second time will  give you the perk
+version.
+
+5 Exiting the Manager 
 ======================
 You quit by either typing the  "/quit" command or sending EOF.  That's
 CTRL+Z in Windows systems and CTRL+D on computers for grown-ups.
 
-5 To-do list 
+6 To-do list 
 =============
 There is a to-do and bug list kept in Trello for LOL's.
 
@@ -136,7 +150,7 @@ There is a to-do and bug list kept in Trello for LOL's.
 Which I'm marginally (not ordinarily or amazingly) more likely to keep
 up-to-date than this README file.
 
-6 Legal Mumbo Jumbo 
+7 Legal Mumbo Jumbo 
 ====================
 The Alternity  RPG belongs to  whoever it is  that ended up  buying it
 (not me).   I'm pretty  sure any  owner of the  game is  reserving all
