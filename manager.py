@@ -27,7 +27,7 @@ def freeSkillsFor(character):
         return knownSkills.get(specieskw) or knownSkills.get("human")
     return _idSpeciesSkills(speciesFreeSkills(), 
                             sanitize(character.species if hasattr(
-                                character, "get") else character))
+                                character, "species") else character))
 
 def freeSkillPointsFor(character):
     return (character.int-1)*5
@@ -46,7 +46,7 @@ def resmod(nm, val):
         if val>18:
             return 5
         return max(0, (val-9)/2)
-    return plusify(_rawModCalc())
+    return _rawModCalc()
 
 def abilityCalc(name, baseScore):
     return (baseScore, halfish(baseScore), resmod(name, baseScore))
@@ -97,7 +97,7 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return _abil()+_skil()
     def _vitals():
         return [("name", nm), ("species", sp), ("profession", pr)]
-    return genDat(_numerics()+_vitals()+[("perks", [])])
+    return genDat(_numerics()+_vitals()+[("perks", []), ("bonuses", [])])
 
 def purchasedGenSkillsOf(character):
     freeSkills = freeSkillsFor(character)
@@ -122,12 +122,16 @@ def plusify(number):
 
 def showAbilities(character):
     def _abilShow(nm, val):
+        def _bns():
+            return sum(starmap(lambda x,y: y, filt(lambda s,v: s=="%s_resmod"%(nm), character.bonuses)))
+        def _depictIt(base, untrained, res):
+            return map(_cleanit, [base, untrained, "" if not res else plusify(res+_bns())])
         def _cleanit(component):
             return ("%s"%(presentable(str(component)))).rjust(2)
         def _statLine(base, untr, res):
             return "%s ( %s ) %s"%(base, untr, res)
         def _tidyStat():
-            return _statLine(*map(_cleanit, abilityCalc(nm,val)))
+            return _statLine(*_depictIt(*abilityCalc(nm, val)))
         def _presentValues():
             return "%s: %s"%(presentable(nm), _tidyStat())
         return inform(nm, _presentValues())
