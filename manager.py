@@ -143,6 +143,57 @@ def startsWithAny(subject, startChars):
             return True
     return False
 
+def baseActionCheck(character):
+    def _profBonus():
+        return {"Combat Spec":3,
+                "Diplomat":1,
+                "Free Agent":2,
+                "Tech Op":1}.get(character.profession, 0)
+    return halfish(character.int+character.dex)+_profBonus()
+
+def actionCheckScore(character):
+    def _scores(base):
+        return ("%s+"%(base+1), base, halfish(base), quarterish(base))
+    return map(str, _scores(baseActionCheck(character)))
+
+def actionsPerRound(character):
+    def _calcAPR(conwill):
+        return max(1,(conwill-8)/8)
+    return min(4, _calcAPR(character.con+character.wil))
+
+def lastResortMaxAndCost(character):
+    def _calc(rates):
+        return rates.get(first(*filter(lambda x: character.per<x, 
+                                       sorted(rates.keys())))) or (4,1)
+    return _calc({8: (0,0), 11: (1,3), 13: (2,2), 15: (3, 1)})
+
+def movementRates(character):
+    def _ratesDict():
+        return {8: (6,4,2,1,2,6,12),
+                10: (8,6,2,1,2,8,16),
+                12: (10,6,2,1,2,10,20),
+                14: (12,8,2,1,2,12,24),
+                16: (14,10,4,2,14,28),
+                18: (16,10,4,2,4,16,32),
+                20: (18,12,4,2,4,18,36),
+                22: (20,12,4,2,4,20,40),
+                24: (22,14,4,2,4,22,44),
+                26: (24,16,6,3,6,24,48),
+                28: (26,16,6,3,6,24,52),
+                30: (28,18,6,3,6,28,56),
+                32: (30,20,6,4,8,30,60)}
+    def _rateLabels():
+        return ["sprint", "run", "walk", "easy_swim", "swim", "glide", "fly"]
+    def _highestMovement():
+        return (32,22,8,4,8,32,64)
+    def _calc(strdex, rates):
+        return rates.get(first(*filter(lambda x: strdex<x, 
+                                       sorted(rates.keys()))), 
+                         _highestMovement())
+    def _mr():
+        return _calc(character.str+character.dex, _ratesDict())
+    return genDat(zip(_rateLabels(), _mr()))
+
 def skillExpense(character, skillName):
     def _costPerBoost(cost, level):
         return (cost)+level
@@ -214,10 +265,20 @@ def showSkills(character):
                   ("Skill Points Spent:".rjust(30) + " %s (%s free)\n"%(skillPointsSpent(character), freeSkillPointsFor(character))),
                   ("Broad Skills purchased:".rjust(29) + " %s (%s at creation)"%(len(purchasedGenSkillsOf(character)), broadSkillsAtCharacterCreationFor(character))))
 
+def showExtraInfo(character):
+    def mrTxt(k,v):
+        return "%s: %s"%(presentable(k).rjust(9),str(v).ljust(3))
+    print "Action Check: %s"%("/".join(actionCheckScore(character)))
+    nl=""
+    for x in starmap(mrTxt, movementRates(character).items()):
+        print "%s%s"%(x, nl),
+        nl = "\n" if not nl else ""
+    print ""
 
 def showCharacter(character):
     msg("%s: %s, %s"%(character.name, character.species, character.profession))
     showAbilities(character)
+    showExtraInfo(character)
     showSkills(character)
     return character
 
