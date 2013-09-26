@@ -185,7 +185,7 @@ per,musical instrument,2,DF,False
 per,sing,2,DF,True
 
 per,interaction,3,-,True
-per,bargian,3,DT,True
+per,bargain,3,DT,True
 per,charm,3,DF,True
 per,interview,3,DF,True
 per,intimidate,3,C,True
