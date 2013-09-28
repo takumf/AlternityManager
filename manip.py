@@ -1,4 +1,4 @@
-from alternityGeneral import alternityAbilities, alternityPerks, sanitize
+from alternityGeneral import alternityAbilities, alternityPerks, sanitize, alternityDamageTracks
 from itertools import starmap
 
 def setAbilityValue(character, stat, val):
@@ -100,6 +100,24 @@ def bonusManagement(character, *args):
         return ", ".join(starmap(_sho, character.bonuses))
     return (True, "Bonuses: %s\nUse the /bonus command to add and remove bonuses."%(_showBonuses()))
 
+def damageManipulation(character, track, val, *args):
+    def _setDmg(value):
+        character[track]=value
+        return character[track]
+    def _adjust(amount):
+        return _setDmg(character[track]+amount)
+    def _manip():
+        if not val:
+            return "%s has sustained %s %ss"%(character.name, 
+                                              character.get(track),
+                                              track)
+        try:
+            (_adjust if val.startswith("-") or val.startswith("+") else _setDmg)(int(val))
+        except ValueError:
+            return "Need an integer value for the amount of damage taken"
+        return "%s %s damage now %s"%(character.name, track, character.get(track))
+    return (True, _manip())
+
 def genericManipulations(character, stat, val=None, *args):
     if stat.startswith("perk") or stat.startswith("flaw"):
         return perkManagement(character, val, *args)
@@ -107,6 +125,8 @@ def genericManipulations(character, stat, val=None, *args):
         return bonusManagement(character, val, *args)
     if stat not in character:
         return tryAlternatives(character, stat, stat, val, *args)
+    if stat in alternityDamageTracks():
+        return damageManipulation(character, stat, val, *args)
     if stat in alternityAbilities():
         return abilityManipulation(character, stat, val, args)
     return skillManipulation(character, stat, val, args)
