@@ -61,6 +61,12 @@ def genClassDef(data):
 def genDat(data):
     return genClassDef(dict(data))
 
+def halfish(value):
+    return (value-(value%2))/2
+
+def quarterish(value):
+    return halfish(halfish(value))
+
 def numericTxt(data):
     def _dat():
         return "%s"%(data)
@@ -132,3 +138,8 @@ def alternityPerks():
             _newPerk("Temper", "wil", "-", -2, -4, -6),
         ])
     return genDat(_perks())
+
+def alternityDamageTracks():
+    def _ident(x):
+        return x
+    return genDat({'stun':_ident, 'wound':_ident, 'mortal':halfish, 'fatigue':halfish})

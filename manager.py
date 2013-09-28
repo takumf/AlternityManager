@@ -16,12 +16,6 @@ def speciesFreeSkills():
                    "t_sa":"athletics,manipulation,stamina,knowledge,awareness,interaction".split(","),
                    'weren':"athletics,unarmed_attack,stamina,knowledge,awareness,interaction".split(",")})
 
-def halfish(value):
-    return (value-(value%2))/2
-
-def quarterish(value):
-    return halfish(halfish(value))
-
 def freeSkillsFor(character):
     def _idSpeciesSkills(knownSkills, specieskw):
         return knownSkills.get(specieskw) or knownSkills.get("human")
@@ -53,6 +47,9 @@ def abilityCalc(name, baseScore):
 
 def skillTnCalc(baseScore):
     return (baseScore, halfish(baseScore), quarterish(baseScore))
+
+def extractBonuses(character, label):
+    return sum([v for k,v in character.bonuses if k==label])
 
 def initializeAbilities():
     def _gen(abils):
@@ -91,13 +88,17 @@ def initializeCharacter(nm="Unknown", sp="Human", pr="Combat Spec"):
         return _speciesFreebies(*pair)
     def _abil():
         return initializeAbilities().items()
+    def _dmg():
+        return map(lambda x: (x, 0), alternityDamageTracks())
     def _skil():
         return map(_applySpeciesFreebies, initializeSkills().items())
     def _numerics():
         return _abil()+_skil()
     def _vitals():
         return [("name", nm), ("species", sp), ("profession", pr)]
-    return genDat(_numerics()+_vitals()+[("perks", []), ("bonuses", [])])
+    def _extra():
+        return [("perks", []), ("bonuses", [])]
+    return genDat(_numerics()+_vitals()+_extra()+_dmg())
 
 def purchasedGenSkillsOf(character):
     freeSkills = freeSkillsFor(character)
@@ -123,7 +124,7 @@ def plusify(number):
 def showAbilities(character):
     def _abilShow(nm, val):
         def _bns():
-            return sum(starmap(lambda x,y: y, filt(lambda s,v: s=="%s_resmod"%(nm), character.bonuses)))
+            return extractBonuses(character, "%s_resmod"%(nm))
         def _depictIt(base, untrained, res):
             return map(_cleanit, [base, untrained, "" if res is None else plusify(res+_bns())])
         def _cleanit(component):
@@ -298,23 +299,37 @@ def showPerks(character):
         return ", ".join(map(_lblPerk, set(character.perks)))
     return _perkNamWithCosts(alternityPerks())
 
-def showExtraInfo(character):
+def showDerivedStats(character):
     def mrTxt(k,v):
-        return "%s: %s"%(presentable(k).rjust(9),str(v).ljust(3))
+        return "%s: %s"%(presentable(k),str(v).ljust(3))
     print "Action Check: %s Actions/Round: %s"%(("/".join(actionCheckScore(character))).ljust(15),
                               actionsPerRound(character))
-    nl=""
     for x in starmap(mrTxt, movementRates(character).items()):
-        print "%s%s"%(x, nl),
-        nl = "\n" if not nl else ""
+        print "%s"%(x),
     print ""
     print "Perks/Flaws: %s"%(showPerks(character))
 
+def showDamageTracks(character):
+    def _sho(track):
+        def _calc(taken, calcer):
+            def _print(cap):
+                print "%s: %s %s%s"%(
+                    presentable(track).rjust(8),
+                    ("%s"%(cap)).rjust(2),
+                    ("%s%s"%("*"*taken, "o"*(cap-taken))).ljust(calcer(20)),
+                    "\n" if calcer==halfish else ""),
+            return _print(calcer(character.con)+extractBonuses(character, 
+                                                               track))
+        return _calc(character.get(track),
+                      alternityDamageTracks().get(track))
+    return all(map(_sho, ["stun", "fatigue", "wound", "mortal"]))
+
 def showCharacter(character):
     msg("%s: %s, %s"%(character.name, character.species, character.profession))
-    showAbilities(character)
-    showExtraInfo(character)
-    showSkills(character)
+    map(lambda x: x(character), [showAbilities, 
+                                 showDamageTracks, 
+                                 showDerivedStats, 
+                                 showSkills])
     return character
 
 def consumeInput(prompt="manage"):
