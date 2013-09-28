@@ -56,11 +56,6 @@ def initializeAbilities():
         return genDat(zip(abils, [7]*len(abils)))
     return _gen(alternityAbilities())
 
-def rawSkills():
-    def _fcrap(content):
-        return eval(first(content.read(), content.close()))
-    return _fcrap(open("skills.py", "rt"))
-
 def initializeSkills():
     def _nsk(stat, parent, profession, untrained, name, cost, purchased=False):
         try:

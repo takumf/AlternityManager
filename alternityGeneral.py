@@ -78,6 +78,11 @@ def numericTxt(data):
         return d
     return _chk(_signsOk(_dat()))
 
+def rawSkills():
+    def _fcrap(content):
+        return eval(first(content.read(), content.close()))
+    return _fcrap(open("skills.py", "rt"))
+
 def reconstituteSkills(character):
     return genDat(filt(lambda k,v: hasattr(v, "update"), character.items()))
 

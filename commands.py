@@ -43,6 +43,10 @@ def newskill(character, stat=None, name=None, cost=4, parent=None, profession="-
         return (True, "%s already appears to exist in character data"%(name))
     if not stat or not name:
         return (True, "Must give the stat the skill falls under and its name.  Should also provide a cost and parent skill name (if applicable)")
+    try:
+        untr=eval(presentable(untrained))
+    except NameError:
+        untr=bool(untrained)
     character[name]=genDat({'parent':parent or None, 
                             'stat':stat,
                             'name':name,
@@ -50,7 +54,7 @@ def newskill(character, stat=None, name=None, cost=4, parent=None, profession="-
                             'parent':parent or None,
                             'profession':profession,
                             'purchased':False,
-                            'untrained':eval(untrained) if hasattr(untrained, "split") else bool(untrained),
+                            'untrained':untr,
                             'level':0})
     skillsOf(character, True)
     return (True, "Added skill data to character: %s"%(character[name]))
