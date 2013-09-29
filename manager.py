@@ -24,7 +24,11 @@ def freeSkillsFor(character):
                                 character, "species") else character))
 
 def freeSkillPointsFor(character):
-    return (character.int-1)*5
+    def _sunkFreebiesBonus():
+        def _bonusesForFreebies(freebies):
+            return 3*len(filter(lambda x: not character.get(x).purchased, freebies))
+        return _bonusesForFreebies(freeSkillsFor(character))    
+    return _sunkFreebiesBonus()+(character.int-1)*5
 
 def broadSkillsAtCharacterCreationFor(character):
     return halfish(character.int)
