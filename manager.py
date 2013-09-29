@@ -206,7 +206,8 @@ def skillExpense(character, skillName):
     def _totalCost(cc, level):
         return sum(map(cc, range(0, level)))
     def _professionMatches(skillProf, chProf):
-        return startsWithAny(chProf, skillProf)
+        return any(map(lambda x: startsWithAny(x, skillProf), 
+                       map(sanitize, chProf.split("/"))))
     def _calcExpense(chProf, gainedFree, cost, profession, level, parent, purchased, **rest):
         if gainedFree or not purchased:
             return 0
@@ -350,7 +351,17 @@ def speciesPrompt():
     return validatePrompt("Species", lambda x: True)
 
 def professionPrompt():
-    return validatePrompt("Profession", lambda x: True)
+    def _notDiplomat(prof):
+        return sanitize(prof)!="diplomat"
+    def _diplomatExtras(prof):
+        return "%s/%s"%(prof, 
+                        validatePrompt("Secondary profession", 
+                                       _notDiplomat))
+    def _det2ndaryProf(prof):
+        if sanitize(prof)=="diplomat":
+            return _diplomatExtras(prof)
+        return prof
+    return _det2ndaryProf(validatePrompt("Profession", lambda x: True))
 
 def createNewCharacter():
         return initializeCharacter(namePrompt(),
