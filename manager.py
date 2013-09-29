@@ -305,6 +305,8 @@ def showDerivedStats(character):
     print "Perks/Flaws: %s"%(showPerks(character))
 
 def showDamageTracks(character):
+    def _speciesDmgBonus():
+        return halfish(character.con) if sanitize(character.species)=="weren" else 0
     def _sho(track):
         def _calc(taken, calcer):
             def _print(cap):
@@ -313,7 +315,7 @@ def showDamageTracks(character):
                     ("%s"%(cap)).rjust(2),
                     ("%s%s"%("*"*taken, "o"*(cap-taken))).ljust(calcer(20)),
                     "\n" if calcer==halfish else ""),
-            return _print(calcer(character.con)+extractBonuses(character, 
+            return _print(calcer(character.con+_speciesDmgBonus())+extractBonuses(character, 
                                                                track))
         return _calc(character.get(track),
                       alternityDamageTracks().get(track))
