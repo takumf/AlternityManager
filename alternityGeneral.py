@@ -67,6 +67,9 @@ def halfish(value):
 def quarterish(value):
     return halfish(halfish(value))
 
+def halfup(v):
+    return v/2 if v%2==0 else (v+1)/2
+
 def numericTxt(data):
     def _dat():
         return "%s"%(data)
@@ -147,4 +150,4 @@ def alternityPerks():
 def alternityDamageTracks():
     def _ident(x):
         return x
-    return genDat({'stun':_ident, 'wound':_ident, 'mortal':halfish, 'fatigue':halfish})
+    return genDat({'stun':_ident, 'wound':_ident, 'mortal':halfup, 'fatigue':halfup})

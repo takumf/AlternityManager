@@ -314,7 +314,7 @@ def showDamageTracks(character):
                     presentable(track).rjust(8),
                     ("%s"%(cap)).rjust(2),
                     ("%s%s"%("*"*taken, "o"*(cap-taken))).ljust(calcer(20)),
-                    "\n" if calcer==halfish else ""),
+                    "\n" if calcer==halfup else ""),
             return _print(calcer(character.con+_speciesDmgBonus())+extractBonuses(character, 
                                                                track))
         return _calc(character.get(track),
