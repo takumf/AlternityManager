@@ -7,10 +7,10 @@ def setAbilityValue(character, stat, val):
             return True
         return _notDoneYetNeedsToBeImplemented()
     if not speciesLimitSatisfied():
-        return (True, "The %s of %s does not fit within the species limits."%(stat, val))
+        return "The %s of %s does not fit within the species limits."%(stat, val)
     oldValue=character[stat]
     character[stat]=int(val)
-    return (True, "Changed %s from %s to %s"%(stat, oldValue, character[stat]))
+    return "Changed %s from %s to %s"%(stat, oldValue, character[stat])
 
 def boostAbilityValue(character, stat, val):
     return setAbilityValue(character, 
@@ -19,7 +19,7 @@ def boostAbilityValue(character, stat, val):
 
 def abilityManipulation(character, stat, val, args):
     def _report():
-        return (True, "%s is currently %s"%(stat, character[stat]))
+        return "%s is currently %s"%(stat, character[stat])
     if val is None:
         return _report()
     if val.startswith("+") or val.startswith("-"):
@@ -37,9 +37,9 @@ def setSkillValue(character, skill, valRaw):
     oldValue=_trainedVal(character[skill].level)
     character[skill].purchased=True if val else False
     character[skill].level=int(val) if character[skill].parent else 0
-    return (True, "Changed %s from %s to %s"%(skill, 
+    return "Changed %s from %s to %s"%(skill, 
                                               oldValue,
-                                              _trainedVal(val)))
+                                              _trainedVal(val))
 
 def boostSkillValue(character, skill, val):
     return setSkillValue(character, 
@@ -52,7 +52,7 @@ def skillManipulation(character, stat, val, args):
             return character[stat].level
         return "trained" if character[stat].purchased else "untrained"
     def _report():
-        return (True, "%s is currently %s"%(stat, _purchased()))
+        return "%s is currently %s"%(stat, _purchased())
     if val is None:
         return _report()
     if val.isdigit():
@@ -71,7 +71,7 @@ def tryAlternatives(character, original, stat, val=None, *args):
                                original, 
                                "_".join([stat, val]),
                                *args)
-    return (True, '''"%s" is an unknown stat.'''%(original))
+    return '''"%s" is an unknown stat.'''%(original)
 
 def perkManagement(character, rawPerk, *args):
     def _manipPerks(perkChart, perk, val, *arguments):
@@ -90,15 +90,15 @@ def perkManagement(character, rawPerk, *args):
                 return _getPerkNameAndArgs("%s_%s"%(pn, arg1), *arggies)
             return "Known perks/flaws: %s"%(rawPerk, ", ".join(perkChart.keys()))
         return _getPerkNameAndArgs(sanitize(rawPerk), *args)
-    return (True, "%s\nPerks/Flaws: %s"%(_identifyPerk(alternityPerks()),
-                                         ", ".join(character.perks)))
+    return "%s\nPerks/Flaws: %s"%(_identifyPerk(alternityPerks()), 
+                                  ", ".join(character.perks))
 
 def bonusManagement(character, *args):
     def _showBonuses():
         def _sho(k,v):
             return "%s=%s"%(k,v)
         return ", ".join(starmap(_sho, character.bonuses))
-    return (True, "Bonuses: %s\nUse the /bonus command to add and remove bonuses."%(_showBonuses()))
+    return "Bonuses: %s\nUse the /bonus command to add and remove bonuses."%(_showBonuses())
 
 def damageManipulation(character, track, val, *args):
     def _setDmg(value):
@@ -116,7 +116,7 @@ def damageManipulation(character, track, val, *args):
         except ValueError:
             return "Need an integer value for the amount of damage taken"
         return "%s %s damage now %s"%(character.name, track, character.get(track))
-    return (True, _manip())
+    return _manip()
 
 def genericManipulations(character, stat, val=None, *args):
     if stat.startswith("perk") or stat.startswith("flaw"):

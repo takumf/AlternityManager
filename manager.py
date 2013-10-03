@@ -3,6 +3,7 @@ from os import path
 from functools import partial
 from itertools import starmap
 from alternityGeneral import *
+import cmd
 import commands
 import manip
 
@@ -135,8 +136,13 @@ def showAbilities(character):
         def _presentValues():
             return "%s: %s"%(presentable(nm), _tidyStat())
         return inform(nm, _presentValues())
+    def _calcAbilCap():
+        return 60+character.perks.count("heightened_ability")
+    def _note(*interspersals):
+        return note(("Total ability scores: %s (%s available)"%interspersals).rjust(50))
     map(lambda x: _abilShow(x, character.get(x)), alternityAbilities())
-    return note(("Total ability scores: %s (60 free)"%(sum(map(lambda x: character.get(x), alternityAbilities())))).rjust(40))
+    return _note(sum(map(lambda x: character.get(x), alternityAbilities())),
+                 _calcAbilCap())
 
 def nmDisp(txt, indent):
     return ("%s%s"%("" if indent else "   ", txt)).ljust(27, ".")
@@ -380,39 +386,73 @@ def managerSpecialCommand(character, command, args):
         return (True, "")
     return _cmd(command.strip("/"))
 
-def managerStatManipulation(character, stat, args):
+def managerStatManipulation(character, stat="", *args):
     return manip.genericManipulations(character, stat, *args)
 
-def signifyResult(character, result, *messages):
+def signifyResult(character, message, *crap):
     showCharacter(character)
-    print "\n%s\n"%(" ".join(messages))
-    return result
+    if message:
+        print message
 
-def handleManagerInput(character):
-    def _procInCmd(command=None, *data):
-        def _callMe():
-            if command.startswith("/"):
-                return managerSpecialCommand
-            return managerStatManipulation
-        if command is None:
+def stringsOnly(things):
+    def isStr(x):
+        return hasattr(x, "split")
+    return filter(isStr, things)
+
+def baseManagerInterpClass(character):
+    class _CommandInterpreter(cmd.Cmd):
+        def do_EOF(self, *args):
+            '''EOF (CTRL+D or CTRL+Z on Windows) exits the interpreter.'''
             return True
-        return signifyResult(character, 
-                             *(_callMe()(character, command, data)))
-    def _safelyConsumeInput():
-        try:
-            return consumeInput()
-        except EOFError:
-            return ["/quit"]
-    return _procInCmd(*_safelyConsumeInput())
+        def preloop(self, *junk):
+            self.character=lambda: character
+            self.prompt="manage:%s> "%(character.name)
+            self.messages=[]
+            showCharacter(self.character())
+        def postcmd(self, stoppy, line):
+            if "newskill" in line:
+                self=createManagerInterpreter(self.character())
+                self.preloop()
+            if "help" not in line and self.messages:
+                signifyResult(self.character(), self.messages)
+                self.messages=""
+            return stoppy or line=="/quit"
+    return _CommandInterpreter
 
-def managerLoop(character):
-    showCharacter(character)
-    while handleManagerInput(character):
-        pass
-    return character
+def allCommands():
+    def _cmdFuncs():
+        return map(lambda x: getattr(commands, x), dir(commands))
+    def _usables(x):
+        return callable(x)
+    return filter(_usables, _cmdFuncs())
+
+def createManagerInterpreter(character):
+    syntax='''class _CmdInterp(baseManagerInterpClass(character)):\n'''
+    for x in character:
+        if x in alternityAbilities():
+            statNm="ability"
+        if x in skillsOf(character):
+            statNm="skill"
+        syntax+='''    def do_%s(self, *args):
+        "Manipulate the %s %s."
+        self.messages=managerStatManipulation(self.character(), "%s", *args)
+    def complete_%s(self, *args):
+        return map(str, range(20))
+'''%(x, x, statNm, x, x)
+    for x in allCommands():
+        syntax+='''    def do_%s(self, *args):
+        "%s"
+        self.messages=commands.%s(self.character(), *args)
+'''%(x.func_name, x.__doc__, x.func_name)
+    exec(syntax)
+    return _CmdInterp()
 
 def manageChar(character):
-    return managerLoop(character)
+    interp=createManagerInterpreter(character)
+    interp.cmdloop('''An Alternity Character Manager Thing.
+Copyright (c) 2013. See LICENSE and README for more info.''')
+    return character
+    # return managerLoop(character)
 
 def saveCharacterData(charDat):
     def _write(f):

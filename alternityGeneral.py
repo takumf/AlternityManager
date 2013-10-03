@@ -115,7 +115,7 @@ def alternityPerks():
             _newPerk("Fortitude", "con", "Active", 4),
             _newPerk("Good Luck", "wil", "Conscious", 3),
             _newPerk("Great Looks", "per", "Active", 3),
-            _newPerk("Hightened Ability", "-", "Active", 10),
+            _newPerk("Heightened Ability", "-", "Active", 10),
             _newPerk("Observant", "wil", "Active", 3),
             _newPerk("Photo Memory", "per", "Conscious", 3),
             _newPerk("Powerful Ally", "per", "Conscious", 4),
